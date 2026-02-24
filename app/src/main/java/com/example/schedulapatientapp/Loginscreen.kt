@@ -103,7 +103,7 @@ package com.example.schedulapatientapp
                 value = phoneNumber,
                 onValueChange = { phoneNumber = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("+1 (555) 000-0000", color = Color.LightGray) },
+                placeholder = { Text("+91 00000-00000", color = Color.LightGray) },
                 leadingIcon = { Icon(Icons.Default.Phone, contentDescription = null, tint = Color.Gray) },
                 shape = RoundedCornerShape(12.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
