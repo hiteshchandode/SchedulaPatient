@@ -1,10 +1,20 @@
 package com.example.schedulapatientapp
 
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Icon
+import androidx.navigation.NavHostController
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,9 +24,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,28 +35,45 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+
+
+
+fun getGreetingText(): String {
+    val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+    return when (hour) {
+        in 5..11 -> "Good Morning ☀️"
+        in 12..16 -> "Good Afternoon 🌤️"
+        in 17..20 -> "Good Evening 🌆"
+        else -> "Good Night 🌙"
+    }
+}
+
+
+
 // 1. THE BLUEPRINTS
 data class Doctor(val name: String, val specialty: String, val color: Color)
+
+
 
 // 2. THE DATA (9 Doctors)
 val doctors = listOf(
     Doctor("Dr. Kumar", "Cardiologist", Color(0xFFF44336)),
-    Doctor("Dr. Lavangi", "Neurologist", Color(0xFF9C27B0)),
-    Doctor("Dr. Elango", "Orthopedic", Color(0xFF3F51B5)),
+    Doctor("Dr. Devi shetty", "Neurologist", Color(0xFF9C27B0)),
+    Doctor("Dr. Sudhir Gupta", "Orthopedic", Color(0xFF3F51B5)),
     Doctor("Dr. Sarah", "Pediatrician", Color(0xFF00BCD4)),
-    Doctor("Dr. James", "General", Color(0xFF4CAF50)),
-    Doctor("Dr. Emily", "Dermatologist", Color(0xFFFFEB3B)),
-    Doctor("Dr. Robert", "Surgeon", Color(0xFFFF9800)),
-    Doctor("Dr. Linda", "Psychiatrist", Color(0xFF795548)),
-    Doctor("Dr. Michael", "Dentist", Color(0xFF607D8B))
+    Doctor("Dr. Arvind Kumar", "General", Color(0xFF4CAF50)),
+    Doctor("Dr. Nitin Sood", "Dermatologist", Color(0xFFFFEB3B)),
+    Doctor("Dr. Atul Goel", "Surgeon", Color(0xFFFF9800)),
+    Doctor("Dr. S.K. Gupta", "Psychiatrist", Color(0xFF795548)),
+    Doctor("Dr. Prathap Reddy", "Dentist", Color(0xFF607D8B))
 )
 
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchDoctorScreen() {
-    // 1. Scaffold handles the "Top Bar" area so content doesn't hit the clock
+fun SearchScreen(navcontroller: NavHostController) {
+    // 1. The Scaffold acts as the container for Top, Bottom, and Body
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -56,58 +81,139 @@ fun SearchDoctorScreen() {
                     Text("Search Doctor", fontWeight = FontWeight.Bold, fontSize = 20.sp)
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* Handle back click */ }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    IconButton(onClick = { navcontroller.popBackStack() }) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* Handle search click */ }) {
+                    IconButton(onClick = { /* Handle search */ }) {
                         Icon(Icons.Default.Search, contentDescription = "Search")
                     }
                 }
             )
+        },
+        bottomBar = {
+            // 2. This is the Bottom Bar with your 4 tools
+            NavigationBar(containerColor = Color.White) {
+                NavigationBarItem(
+                    icon = { Icon(Icons.Default.Search, null) },
+                    label = { Text("Find Doctor") },
+                    selected = true,
+                    onClick = { }
+                )
+                NavigationBarItem(
+                    icon = { Icon(Icons.Default.List, null) },
+                    label = { Text("Records") },
+                    selected = false,
+                    onClick = { }
+                )
+                NavigationBarItem(
+                    icon = { Icon(Icons.Default.DateRange, null) },
+                    label = { Text("Appointment") },
+                    selected = false,
+                    onClick = { }
+                )
+                NavigationBarItem(
+                    icon = { Icon(Icons.Default.Person, null) },
+                    label = { Text("Profile") },
+                    selected = false,
+                    onClick = { }
+                )
+            }
         }
-    ) { innerPadding ->
-        // 2. Use innerPadding to push content down below the header
+    )
+
+
+
+    { innerPadding ->
+
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            // Your Search Bar
+
+            // 2.  Greeting (Climate)
+            Text(
+                text = getGreetingText(),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.padding(top = 20.dp, bottom = 10.dp)
+            )
+
+            // 3.  Search Bar
             OutlinedTextField(
-                value = "", onValueChange = {},
+                value = "",
+                onValueChange = {},
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("Search by name...") },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                leadingIcon = { Icon(Icons.Default.Search, null) },
                 shape = RoundedCornerShape(12.dp)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
-            Text("Top Specialists", fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(20.dp))
 
-            // Your Grid of 9 Doctors
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = Modifier.height(400.dp),
-                contentPadding = PaddingValues(top = 8.dp)
-            ) {
-                items(doctors) { doctor ->
-                    DoctorItem(doctor)
-                }
+            // 4. The "Top Specialists" Title
+            Text(
+                text = "Top Specialists",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // 5.  doctor grid code
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            modifier = Modifier.height(400.dp),
+            contentPadding = PaddingValues(top = 8.dp)
+        ) {
+            items(doctors) { doctor ->
+                DoctorItem(doctor)
             }
+        }
 
-            // Clinic Section
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Nearby Clinics", fontWeight = FontWeight.Bold)
-                Text("Map View", color = Color.Blue)
-            }
+            Spacer(modifier = Modifier.height(20.dp))
 
-            ClinicItem("City Care Clinic", "2.4km • Open now", Icons.Default.LocationOn)
+//            // 6. Nearby Clinics Title
+//            Text(
+//                text = "Nearby Clinics",
+//                fontWeight = FontWeight.Bold,
+//                fontSize = 18.sp
+//            )
+//
+//           // Clinic Section
+//                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+//                        Text("Nearby Clinics", fontWeight = FontWeight.Bold)
+//                        Text("Map View", color = Color.Blue)
+//                    }
+//
+//            ClinicItem("City Care Clinic", "2.4km • Open now", Icons.Default.LocationOn)
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // 4. THE SMALL COMPONENTS (Doctor circles and Clinic cards)
 @Composable

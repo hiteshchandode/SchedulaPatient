@@ -1,5 +1,6 @@
 package com.example.schedulapatientapp
 
+import com.example.schedulapatientapp.SearchScreen
 import androidx.compose.material3.Surface
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
@@ -34,7 +35,6 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
 
                     NavHost(navController = navController, startDestination = "login") {
-
                         // Screen 1: LOGIN
                         composable("login") {
                             // Ensure your LoginScreen function accepts 'navController'
@@ -42,15 +42,16 @@ class MainActivity : ComponentActivity() {
                         }
 
                         // Screen 2: SEARCH (The design you uploaded)
-                        composable("search") {
-                            SearchDoctorScreen()
+                        composable("doctor_list") {
+                                SearchScreen(navController)
+                            }
                         }
                     }
                 }
             }
         }
     }
-}
+
 
 //class MainActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
