@@ -1,5 +1,9 @@
 package com.example.schedulapatientapp
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
@@ -51,7 +55,7 @@ fun getGreetingText(): String {
 
 
 // 1. THE BLUEPRINTS
-data class Doctor(val name: String, val specialty: String, val color: Color)
+//data class Doctor(val name: String, val specialty: String, val color: Color)
 
 
 
@@ -73,6 +77,14 @@ val doctors = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(navcontroller: NavHostController) {
+
+    // Memory for the Search Bar
+    var searchQuery by remember { mutableStateOf("") }
+
+    // Memory for the Bottom Bar (0 = Find Doctor, 1 = Records, etc.)
+    var selectedTab by remember { mutableStateOf(0) }
+
+
     // 1. The Scaffold acts as the container for Top, Bottom, and Body
     Scaffold(
         topBar = {
@@ -98,26 +110,26 @@ fun SearchScreen(navcontroller: NavHostController) {
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.Search, null) },
                     label = { Text("Find Doctor") },
-                    selected = true,
-                    onClick = { }
+                    selected = selectedTab == 0,
+                    onClick = {selectedTab = 0}
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.List, null) },
                     label = { Text("Records") },
-                    selected = false,
-                    onClick = { }
+                    selected = selectedTab == 1,
+                    onClick = {selectedTab = 1}
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.DateRange, null) },
                     label = { Text("Appointment") },
-                    selected = false,
-                    onClick = { }
+                    selected = selectedTab == 2,
+                    onClick = {selectedTab = 2}
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.Person, null) },
                     label = { Text("Profile") },
-                    selected = false,
-                    onClick = { }
+                    selected = selectedTab == 3,
+                    onClick = {selectedTab = 3}
                 )
             }
         }
@@ -146,8 +158,8 @@ fun SearchScreen(navcontroller: NavHostController) {
 
             // 3.  Search Bar
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = "", //it shows what i type
+                onValueChange = {newValue -> searchQuery = newValue}, //it save what i type
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("Search by name...") },
                 leadingIcon = { Icon(Icons.Default.Search, null) },
@@ -172,8 +184,8 @@ fun SearchScreen(navcontroller: NavHostController) {
             modifier = Modifier.height(400.dp),
             contentPadding = PaddingValues(top = 8.dp)
         ) {
-            items(doctors) { doctor ->
-                DoctorItem(doctor)
+            items(Doctors) { doctor ->
+                DoctorItem(doctor, navcontroller)
             }
         }
 
@@ -207,18 +219,11 @@ fun SearchScreen(navcontroller: NavHostController) {
 
 
 
-
-
-
-
-
-
-
-
 // 4. THE SMALL COMPONENTS (Doctor circles and Clinic cards)
 @Composable
-fun DoctorItem(doctor: Doctor) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(8.dp)) {
+fun DoctorItem(doctor: Doctor, navController: NavHostController) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(8.dp) .clickable {navController.navigate("doctor_profile")}) {
+
         Box(
             modifier = Modifier.size(80.dp).background(doctor.color.copy(alpha = 0.2f), CircleShape).border(2.dp, doctor.color, CircleShape),
             contentAlignment = Alignment.Center
