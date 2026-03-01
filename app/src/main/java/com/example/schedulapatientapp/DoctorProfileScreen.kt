@@ -33,6 +33,13 @@ fun DoctorProfileScreen(navController: NavController) {
             )
         },
         bottomBar = {
+
+            Surface(
+                modifier = Modifier.fillMaxWidth().navigationBarsPadding(),
+                color = Color.White,
+                shadowElevation = (8.dp)
+            ){}
+
             Button(
                 onClick = {navController.navigate("booking_step1") },
                 modifier = Modifier.fillMaxWidth().padding(16.dp).height(56.dp),

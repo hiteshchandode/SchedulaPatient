@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
+
 class BookingViewModel : ViewModel() {
     // Page 4 Data
     var selectedDate by mutableStateOf("1st Oct")
@@ -23,4 +24,6 @@ class BookingViewModel : ViewModel() {
 
     // Page 7 (Token)
     val tokenNumber = "7/25"
+
+
 }

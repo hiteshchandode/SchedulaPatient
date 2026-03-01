@@ -112,6 +112,7 @@ fun SearchScreen(navcontroller: NavHostController) {
                     label = { Text("Records") },
                     selected = selectedTab == 1,
                     onClick = {selectedTab = 1}
+
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.DateRange, null) },
@@ -132,14 +133,13 @@ fun SearchScreen(navcontroller: NavHostController) {
 
 
     { innerPadding ->
-
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState())
+
         ) {
 
             // 2.  Greeting (Climate)

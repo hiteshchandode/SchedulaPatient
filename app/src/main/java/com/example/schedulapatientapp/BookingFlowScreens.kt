@@ -113,7 +113,7 @@ fun PatientDetailsScreen(navController: NavController, viewModel: BookingViewMod
             OutlinedTextField(value = viewModel.patientComplaint, onValueChange = { viewModel.patientComplaint = it }, label = { Text("Complaint") }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp), minLines = 3)
 
             Spacer(modifier = Modifier.weight(1f))
-            AppButton("Confirm Appointment") { navController.navigate("confirmation") }
+            AppButton("Confirm Appointment") {  navController.navigate("confirmation") }
         }
     }
 }
