@@ -1,85 +1,75 @@
+
 package com.example.schedulapatientapp
 
-import androidx.compose.ui.graphics.Color
-import com.example.schedulapatientapp.SearchScreen
-import androidx.compose.material3.Surface
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.fillMaxSize
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.internal.composableLambda
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.schedulapatientapp.ui.theme.SchedulaPatientAppTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel // ERROR FIX: Import for viewModel()
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-
-
+import com.example.schedulapatientapp.ui.theme.SchedulaPatientAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            // Your App Theme wrapper
             SchedulaPatientAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // ONE Navigation Controller to rule them all
                     val navController = rememberNavController()
 
+                    // Yahan hum ViewModel initialize kar rahe hain
+                    // Isse data saari screens ke beech share hoga
+                    val bookingViewModel: BookingViewModel = viewModel()
+
                     NavHost(navController = navController, startDestination = "login") {
-                        // Screen 1: LOGIN
+                        // Page 1: Login
                         composable("login") {
-                            // Ensure your LoginScreen function accepts 'navController'
                             LoginScreen(navController = navController)
                         }
 
-                        // Screen 2: SEARCH (The design you uploaded)
+                        // Page 2: Search Doctor
                         composable("doctor_list") {
-                            SearchScreen(navController)
+                            SearchScreen(navcontroller = navController)
                         }
 
-                        //Screen 3: Doctor profile
+                        // Page 3: Doctor Profile
                         composable("doctor_profile") {
-                            // We pass the navController so we can use the "Back" button later
                             DoctorProfileScreen(navController = navController)
-
                         }
 
-                    }
+                        // Page 4: Booking Step 1 (Date Selection)
+                        composable("booking_step1") {
+                            BookingStepOne(navController = navController, viewModel = bookingViewModel)
+                        }
 
+                        // Page 5: Time Selection
+                        composable("booking_step2") {
+                            TimeSlotScreen(navController = navController, viewModel = bookingViewModel)
+                        }
 
+                        // Page 10: Patient Details
+                        composable("patient_details") {
+                            PatientDetailsScreen(navController = navController, viewModel = bookingViewModel)
+                        }
+
+                        // Page 7: Final Confirmation
+                        composable("confirmation") {
+                            ConfirmationScreen(navController = navController, viewModel = bookingViewModel)
+                        }
                     }
                 }
             }
         }
     }
-
-
-    @Composable
-    fun Greeting(name: String, modifier: Modifier = Modifier) {
-        Text(
-            text = "Hello $name!",
-            modifier = modifier
-        )
-    }
-
-
-    @Preview(showBackground = true)
-    @Composable
-    fun GreetingPreview() {
-        SchedulaPatientAppTheme {
-            Greeting("Android")
-        }
-    }
+}
 

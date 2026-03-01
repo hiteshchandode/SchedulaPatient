@@ -53,12 +53,6 @@ fun getGreetingText(): String {
 }
 
 
-
-// 1. THE BLUEPRINTS
-//data class Doctor(val name: String, val specialty: String, val color: Color)
-
-
-
 // 2. THE DATA (9 Doctors)
 val doctors = listOf(
     Doctor("Dr. Kumar", "Cardiologist", Color(0xFFF44336)),

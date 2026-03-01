@@ -16,20 +16,6 @@ data class Doctor(
 )
 
 
-//data class Clinic(
-//    val id: Int,
-//    val name: String,
-//    val specialty: String,
-//    val distance: String,
-//    val rating: Double,
-//    val experienceYears: Int,
-//    val achievement: String, // e.g., "Gold Medalist"
-//    val availability: String = "Available",
-//    val reviews: Int
-//)
-
-
-
 // 2. Updated the list to match the new Doctor data
 val Doctors = listOf(
     Doctor("Kumar", "Cardiologist", Color(0xFFF44336), 4.8, 150, 12, "Best Surgeon"),
@@ -56,8 +42,6 @@ val Doctors = listOf(
 
 
 
-//import androidx.compose.ui.graphics.Color
-//
 
 data class Clinic(
     val id: Int,
@@ -70,15 +54,3 @@ data class Clinic(
     val availability: String = "Available",
     val reviews: Int
 )
-//
-//val Doctors = listOf(
-//    Doctor("Dr. Kumar", "Cardiologist", Color(0xFFF44336)),
-//    Doctor("Dr. Devi Shetty", "Neurologist", Color(0xFF9C27B0)),
-//    Doctor("Dr. Sudhir Gupta", "Orthopedic", Color(0xFF3F51B5)),
-//    Doctor("Dr. Sarah", "Pediatrician", Color(0xFF00BCD4)),
-//    Doctor("Dr. Arvind Kumar", "General", Color(0xFF4CAF50)),
-//    Doctor("Dr. Nitin Sood", "Dermatologist", Color(0xFFFFEB3B)),
-//    Doctor("Dr. Atul Goel", "Surgeon", Color(0xFFFF9800)),
-//    Doctor("Dr. S. K. Gupta", "Psychiatrist", Color(0xFF795548)),
-//    Doctor("Dr. Prathap Reddy", "Dentist", Color(0xFF607D8B))
-//)

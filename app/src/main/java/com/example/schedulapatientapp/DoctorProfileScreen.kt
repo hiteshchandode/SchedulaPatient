@@ -34,7 +34,7 @@ fun DoctorProfileScreen(navController: NavController) {
         },
         bottomBar = {
             Button(
-                onClick = { /* Handle click */ },
+                onClick = {navController.navigate("booking_step1") },
                 modifier = Modifier.fillMaxWidth().padding(16.dp).height(56.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
