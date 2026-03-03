@@ -1,5 +1,7 @@
 package com.example.schedulapatientapp
 
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -165,11 +167,10 @@ fun BookingStepOne(navController: NavController, viewModel: BookingViewModel) {
     }
 }
 
-// --- PAGE 5: TIME SELECTION ---
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimeSlotScreen(navController: NavController, viewModel: BookingViewModel) {
+    val scrollState = rememberScrollState()
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -183,27 +184,124 @@ fun TimeSlotScreen(navController: NavController, viewModel: BookingViewModel) {
         },
         bottomBar = { BookingBottomBar(navController, "booking_step1") }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding).fillMaxSize().padding(16.dp).background(Color.White)) {
-            Text("Available Slots", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            Spacer(modifier = Modifier.height(16.dp))
-            val slots = listOf("10:00 AM", "11:00 AM", "12:00 PM", "05:00 PM")
-            slots.forEach { slot ->
-                val isSelected = viewModel.selectedTime == slot
-                Card(
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp).clickable { viewModel.selectedTime = slot },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    border = BorderStroke(2.dp, if (isSelected) Color(0xFF2196F3) else Color.Transparent),
-                    elevation = CardDefaults.cardElevation(2.dp)
-                ) {
-                    Text(slot, modifier = Modifier.padding(16.dp), fontWeight = FontWeight.Bold)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(Color(0xFFF8FAFC))
+                .verticalScroll(scrollState)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // 1. Doctor Initial Alphabet "K" (Same as Doctor Details)
+            Surface(
+                modifier = Modifier.size(80.dp),
+                shape = RoundedCornerShape(20.dp),
+                color = Color(0xFFE3F2FD)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text("K", color = Color(0xFF2196F3), fontSize = 32.sp, fontWeight = FontWeight.Bold)
                 }
             }
-            Spacer(modifier = Modifier.weight(1f))
-            AppButton("Next: Patient Details") { navController.navigate("patient_details") }
+            Text("Dr. Kumar", fontWeight = FontWeight.Bold, fontSize = 20.sp, modifier = Modifier.padding(top = 8.dp))
+
+            // 2. Specialty Details Card (Same as Doctor Details)
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text("SPECIALTY", color = Color(0xFF2196F3), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text("Cardiologist", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("🕒 12 yrs Experience", color = Color.Gray, fontSize = 13.sp)
+                }
+            }
+
+            // 3. Time Slots Section (Morning and Evening)
+            Text("Choose your slot", modifier = Modifier.fillMaxWidth().padding(top = 20.dp), fontWeight = FontWeight.Bold)
+
+            // Morning Slots
+            TimeSlotGroup(
+                sectionTitle = "Morning",
+                timeList = listOf("10:00 AM", "11:00 AM", ),
+                selectedTime = viewModel.selectedTime,
+                onSelect = { viewModel.selectedTime = it }
+            )
+
+            // Evening Slots
+            TimeSlotGroup(
+                sectionTitle = "Evening",
+                timeList = listOf("05:00 PM", "06:00 PM", ),
+                selectedTime = viewModel.selectedTime,
+                onSelect = { viewModel.selectedTime = it }
+            )
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            // 4. Next Button
+            AppButton("Next: Patient Details") {
+                if (viewModel.selectedTime.isNotEmpty()) {
+                    navController.navigate("patient_details")
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//// --- PAGE 5: TIME SELECTION ---
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun TimeSlotScreen(navController: NavController, viewModel: BookingViewModel) {
+//    Scaffold(
+//        topBar = {
+//            CenterAlignedTopAppBar(
+//                title = { Text("Select Time", fontWeight = FontWeight.Bold) },
+//                navigationIcon = {
+//                    IconButton(onClick = { navController.popBackStack() }) {
+//                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+//                    }
+//                }
+//            )
+//        },
+//        bottomBar = { BookingBottomBar(navController, "booking_step1") }
+//    ) { padding ->
+//        Column(modifier = Modifier.padding(padding).fillMaxSize().padding(16.dp).background(Color.White)) {
+//            Text("Available Slots", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+//            Spacer(modifier = Modifier.height(16.dp))
+//            val slots = listOf("10:00 AM", "11:00 AM", "12:00 PM", "05:00 PM")
+//            slots.forEach { slot ->
+//                val isSelected = viewModel.selectedTime == slot
+//                Card(
+//                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp).clickable { viewModel.selectedTime = slot },
+//                    shape = RoundedCornerShape(12.dp),
+//                    colors = CardDefaults.cardColors(containerColor = Color.White),
+//                    border = BorderStroke(2.dp, if (isSelected) Color(0xFF2196F3) else Color.Transparent),
+//                    elevation = CardDefaults.cardElevation(2.dp)
+//                ) {
+//                    Text(slot, modifier = Modifier.padding(16.dp), fontWeight = FontWeight.Bold)
+//                }
+//            }
+//            Spacer(modifier = Modifier.weight(1f))
+//            AppButton("Next: Patient Details") { navController.navigate("patient_details") }
+//        }
+//    }
+//}
 
 // --- PAGE 10: PATIENT DETAILS ---
 
@@ -292,3 +390,47 @@ fun ProfileScreen(navController: NavController) {
 
 
 
+@Composable
+fun TimeSlotGroup(
+    sectionTitle: String,
+    timeList: List<String>,
+    selectedTime: String,
+    onSelect: (String) -> Unit
+) {
+    Column(modifier = Modifier.padding(top = 20.dp)) {
+        Text(sectionTitle, fontWeight = FontWeight.Bold, color = Color.Gray)
+
+        timeList.forEach { time ->
+            val isSelected = (time == selectedTime)
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .clickable { onSelect(time) }, // When you click the box, it selects the time
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isSelected) Color(0xFF2196F3) else Color.White
+                ),
+                border = if (isSelected) null else BorderStroke(1.dp, Color(0xFFE2E8F0))
+            ) {
+                Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = time,
+                        color = if (isSelected) Color.White else Color.Black,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    RadioButton(
+                        selected = isSelected,
+                        onClick = { onSelect(time) },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = Color.White,
+                            unselectedColor = Color.LightGray
+                        )
+                    )
+                }
+            }
+        }
+    }
+}
