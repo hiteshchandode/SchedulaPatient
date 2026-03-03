@@ -1,6 +1,9 @@
 
 package com.example.schedulapatientapp
 
+import com.example.schedulapatientapp.TimeSlotScreen
+import com.example.schedulapatientapp.PatientDetailsScreen
+import com.example.schedulapatientapp.ConfirmationScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -66,6 +69,15 @@ class MainActivity : ComponentActivity() {
                         composable("confirmation") {
                             ConfirmationScreen(navController = navController, viewModel = bookingViewModel)
                         }
+
+                        composable("records") {
+                            RecordsScreen(navController = navController, viewModel = bookingViewModel)
+                        }
+                        //goes for profile section
+                        composable("profile") {
+                            ProfileScreen(navController)
+                        }
+
                     }
                 }
             }

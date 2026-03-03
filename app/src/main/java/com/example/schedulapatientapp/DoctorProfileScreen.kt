@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,12 +29,12 @@ fun DoctorProfileScreen(navController: NavController) {
                 title = { Text("Doctor Profile", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-//                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                      Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
         },
-        bottomBar = {
+        bottomBar = {BookingBottomBar(navController,"doctor_list")
 
             Surface(
                 modifier = Modifier.fillMaxWidth().navigationBarsPadding(),
@@ -74,7 +76,7 @@ fun DoctorProfileScreen(navController: NavController) {
                         modifier = Modifier.size(80.dp).background(Color(0xFFCBD5E1), RoundedCornerShape(12.dp)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("DL", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                        Text("K", fontSize = 24.sp, fontWeight = FontWeight.Bold)
                     }
 
                     Column(modifier = Modifier.padding(start = 16.dp)) {
