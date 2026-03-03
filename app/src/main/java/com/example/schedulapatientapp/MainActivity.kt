@@ -59,6 +59,15 @@ class MainActivity : ComponentActivity() {
                         composable("booking_step2") {
                             TimeSlotScreen(navController = navController, viewModel = bookingViewModel)
                         }
+                        //page:6 Time seletion by clock
+                        composable("exact_time_picker") {
+                            SelectExactTimeScreen(navController = navController, viewModel = bookingViewModel)
+                        }
+
+                        //page:7 confirmation screen
+                        composable("final_confirmation") {
+                            FinalConfirmationScreen(navController = navController, viewModel = bookingViewModel)
+                        }
 
                         // Page 10: Patient Details
                         composable("patient_details") {

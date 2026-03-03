@@ -1,5 +1,10 @@
 package com.example.schedulapatientapp
 
+
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.material3.TimePickerDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.BorderStroke
@@ -134,7 +139,7 @@ fun BookingStepOne(navController: NavController, viewModel: BookingViewModel) {
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                val dates = listOf("Mon\n1 Oct", "Tue\n2 Oct", "Wed\n3 Oct", "Thu\n4 Oct", "Fri\n5 Oct")
+                val dates = listOf("Mon\n1 Mar", "Tue\n2 Mar", "Wed\n3 Mar", "Thu\n4 Mar", "Fri\n5 Mar")
                 dates.forEach { date ->
                     val isSelected = viewModel.selectedDate.contains(date.takeLast(5))
                     Surface(
@@ -166,6 +171,8 @@ fun BookingStepOne(navController: NavController, viewModel: BookingViewModel) {
         }
     }
 }
+
+//Time slot
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -241,67 +248,15 @@ fun TimeSlotScreen(navController: NavController, viewModel: BookingViewModel) {
             Spacer(modifier = Modifier.height(30.dp))
 
             // 4. Next Button
-            AppButton("Next: Patient Details") {
+            AppButton("Next: Select time") {
                 if (viewModel.selectedTime.isNotEmpty()) {
-                    navController.navigate("patient_details")
+                    navController.navigate("exact_time_picker")
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//// --- PAGE 5: TIME SELECTION ---
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun TimeSlotScreen(navController: NavController, viewModel: BookingViewModel) {
-//    Scaffold(
-//        topBar = {
-//            CenterAlignedTopAppBar(
-//                title = { Text("Select Time", fontWeight = FontWeight.Bold) },
-//                navigationIcon = {
-//                    IconButton(onClick = { navController.popBackStack() }) {
-//                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-//                    }
-//                }
-//            )
-//        },
-//        bottomBar = { BookingBottomBar(navController, "booking_step1") }
-//    ) { padding ->
-//        Column(modifier = Modifier.padding(padding).fillMaxSize().padding(16.dp).background(Color.White)) {
-//            Text("Available Slots", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-//            Spacer(modifier = Modifier.height(16.dp))
-//            val slots = listOf("10:00 AM", "11:00 AM", "12:00 PM", "05:00 PM")
-//            slots.forEach { slot ->
-//                val isSelected = viewModel.selectedTime == slot
-//                Card(
-//                    modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp).clickable { viewModel.selectedTime = slot },
-//                    shape = RoundedCornerShape(12.dp),
-//                    colors = CardDefaults.cardColors(containerColor = Color.White),
-//                    border = BorderStroke(2.dp, if (isSelected) Color(0xFF2196F3) else Color.Transparent),
-//                    elevation = CardDefaults.cardElevation(2.dp)
-//                ) {
-//                    Text(slot, modifier = Modifier.padding(16.dp), fontWeight = FontWeight.Bold)
-//                }
-//            }
-//            Spacer(modifier = Modifier.weight(1f))
-//            AppButton("Next: Patient Details") { navController.navigate("patient_details") }
-//        }
-//    }
-//}
 
 // --- PAGE 10: PATIENT DETAILS ---
 
@@ -432,5 +387,272 @@ fun TimeSlotGroup(
                 }
             }
         }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectExactTimeScreen(navController: NavController, viewModel: BookingViewModel) {
+    val scrollState = rememberScrollState()
+
+    // 1. This is the "Memory" for the Clock (Setting default to 10:00 AM)
+    val timePickerState = rememberTimePickerState(
+        initialHour = 10,
+        initialMinute = 0,
+        is24Hour = false // This ensures it shows 1-12 with AM/PM
+    )
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("Booking Screen", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        bottomBar = { BookingBottomBar(navController, "doctor_list") }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(Color(0xFFF8FAFC))
+                .verticalScroll(scrollState)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // --- DOCTOR CARD (Same as before) ---
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(2.dp)
+            ) {
+                Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Surface(modifier = Modifier.size(60.dp), shape = RoundedCornerShape(12.dp), color = Color(0xFFE3F2FD)) {
+                        Box(contentAlignment = Alignment.Center) { Text("Dr", color = Color(0xFF2196F3)) }
+                    }
+                    Text("Dr. Kumar", fontWeight = FontWeight.Bold, fontSize = 20.sp, modifier = Modifier.padding(top = 8.dp))
+                    Text("Cardiologist • 12 yrs Exp", color = Color.Gray, fontSize = 14.sp)
+                }
+            }
+
+            // --- CHOOSE TIME HEADER ---
+            Spacer(modifier = Modifier.height(24.dp))
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Column {
+                    Text("Choose time", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                    Text("Next available slot", color = Color.Gray)
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                // Date Display
+                Surface(shape = RoundedCornerShape(8.dp), border = BorderStroke(1.dp, Color(0xFFE2E8F0)), color = Color.White) {
+                    Row(modifier = Modifier.padding(8.dp)) {
+                        Icon(Icons.Default.DateRange, null, tint = Color(0xFF2196F3), modifier = Modifier.size(18.dp))
+                        Text(" march 26", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    }
+                }
+            }
+
+            // --- MORNING HEADER ---
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = "Morning  09:00 AM - 12:00 PM",
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = Color(0xFF2196F3),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            // --- THE REAL INTERACTIVE CLOCK CARD ---
+            Spacer(modifier = Modifier.height(16.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // This shows the Time Picker (Hours 1-12)
+                    TimePicker(
+                        state = timePickerState,
+                        colors = TimePickerDefaults.colors(
+                            selectorColor = Color(0xFF2196F3), // The blue hand
+                            periodSelectorSelectedContainerColor = Color(0xFFE3F2FD), // AM/PM box
+                            periodSelectorSelectedContentColor = Color(0xFF2196F3)
+                        )
+                    )
+
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                        TextButton(onClick = { /* Clear selection */ }) { Text("CANCEL", color = Color.Gray) }
+                        TextButton(onClick = {
+                            // Save picked time to ViewModel
+                            viewModel.selectedTime = "${timePickerState.hour}:${timePickerState.minute}"
+                        }) { Text("OK", color = Color(0xFF2196F3), fontWeight = FontWeight.Bold) }
+                    }
+                }
+            }
+
+            // --- BUTTON ---
+            Spacer(modifier = Modifier.height(32.dp))
+            AppButton("Book Appointment →") {
+                navController.navigate("final_confirmation")
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+    }
+}
+
+//confirmation screen after dial clock screen
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FinalConfirmationScreen(navController: NavController, viewModel: BookingViewModel) {
+    val scrollState = rememberScrollState()
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("Booking Confirmation", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        bottomBar = { BookingBottomBar(navController, "doctor_list") }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(Color(0xFFF8FAFC))
+                .verticalScroll(scrollState)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // 1. DOCTOR INFO CARD (Top Section)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Surface(modifier = Modifier.size(60.dp), shape = RoundedCornerShape(12.dp), color = Color(0xFFE3F2FD)) {
+                        Box(contentAlignment = Alignment.Center) { Text("Doc", color = Color(0xFF2196F3)) }
+                    }
+                    Text("Dr. Kumar", fontWeight = FontWeight.Bold, fontSize = 18.sp, modifier = Modifier.padding(top = 8.dp))
+                    Text("⭐ 4.9", color = Color(0xFFFFA000), fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text("Cardiologist • 12 Years Experience", color = Color.Gray, fontSize = 12.sp)
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Surface(color = Color(0xFFE0F7FA), shape = RoundedCornerShape(20.dp)) {
+                        Text("🥇 GOLD MEDALIST", color = Color(0xFF00ACC1), modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp), fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 2. SUCCESS MESSAGE & TOKEN BOX
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F9FF)), // Light Blue background
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Default.CheckCircle, contentDescription = null, tint = Color(0xFF4CAF50))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Appointment confirmed with Dr. Kumar.", fontWeight = FontWeight.Medium, fontSize = 14.sp)
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        // Token Small Card
+                        Surface(modifier = Modifier.weight(1f), color = Color.White, shape = RoundedCornerShape(12.dp)) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text("TOKEN", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                Text("#14", color = Color(0xFF2196F3), fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
+                            }
+                        }
+                        // Time Small Card
+                        Surface(modifier = Modifier.weight(1f), color = Color.White, shape = RoundedCornerShape(12.dp)) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text("TIME", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                Text("10:15 AM", color = Color.Black, fontSize = 18.sp, fontWeight = FontWeight.ExtraBold)
+                            }
+                        }
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 3. APPOINTMENT DETAILS (Text Rows)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    DetailRow("DATE", "Monday, 5 March 2026")
+                    DetailRow("DURATION", "30 Minutes")
+                    DetailRow("VISIT TYPE", "In-Person")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // 4. ACTION BUTTONS
+            OutlinedButton(
+                onClick = { /* Add to Calendar */ },
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(1.dp, Color(0xFF2196F3))
+            ) {
+                Icon(Icons.Default.DateRange, contentDescription = null, tint = Color(0xFF2196F3))
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Add to Calendar", color = Color(0xFF2196F3))
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = { navController.navigate("doctor_list") },
+                modifier = Modifier.fillMaxWidth().height(50.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
+            ) {
+                Text("View Appointment →", fontWeight = FontWeight.Bold)
+            }
+
+            TextButton(onClick = { navController.navigate("doctor_list") }) {
+                Text("Back to Home", color = Color.Gray)
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+    }
+}
+
+// Helper for the Text Rows
+@Composable
+fun DetailRow(label: String, value: String) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(label, color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+        Text(value, fontWeight = FontWeight.Bold, fontSize = 13.sp)
     }
 }
