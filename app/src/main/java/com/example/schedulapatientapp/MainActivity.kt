@@ -69,6 +69,11 @@ class MainActivity : ComponentActivity() {
                             FinalConfirmationScreen(navController = navController, viewModel = bookingViewModel)
                         }
 
+                        //page:8 unable to book slot unavailable
+                        composable("slot_unavailable") {
+                            SlotUnavailableScreen(navController, bookingViewModel)
+                        }
+
                         // Page 10: Patient Details
                         composable("patient_details") {
                             PatientDetailsScreen(navController = navController, viewModel = bookingViewModel)

@@ -503,7 +503,7 @@ fun SelectExactTimeScreen(navController: NavController, viewModel: BookingViewMo
             // --- BUTTON ---
             Spacer(modifier = Modifier.height(32.dp))
             AppButton("Book Appointment →") {
-                navController.navigate("final_confirmation")
+                navController.navigate("slot_unavailable")
             }
             Spacer(modifier = Modifier.height(20.dp))
         }
@@ -654,5 +654,141 @@ fun DetailRow(label: String, value: String) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(label, color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
         Text(value, fontWeight = FontWeight.Bold, fontSize = 13.sp)
+    }
+}
+
+// unable to book screen
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SlotUnavailableScreen(navController: NavController, viewModel: BookingViewModel) {
+    val scrollState = rememberScrollState()
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("Unable to book", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        bottomBar = { BookingBottomBar(navController, "doctor_list") }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(Color(0xFFF8FAFC))
+                .verticalScroll(scrollState)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // 1. DOCTOR INFO CARD (With Alphabet Initial instead of Image)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Circle with "L" for Dr. Lavangi
+                    Surface(
+                        modifier = Modifier.size(70.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        color = Color(0xFFE3F2FD)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Text("L", color = Color(0xFF2196F3), fontSize = 28.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                    Text("Dr. Kumar", fontWeight = FontWeight.Bold, fontSize = 20.sp, modifier = Modifier.padding(top = 8.dp))
+                    Text("⭐ 4.9", color = Color(0xFFFFA000), fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Text("Cardiologist • 12 yrs exp", color = Color.Gray, fontSize = 12.sp)
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Surface(color = Color(0xFFE0F7FA), shape = RoundedCornerShape(20.dp)) {
+                        Text("🥇 Gold Medalist", color = Color(0xFF00ACC1), modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp), fontSize = 12.sp)
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // 2. ERROR MESSAGE SECTION
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
+                Surface(modifier = Modifier.size(32.dp), shape = RoundedCornerShape(16.dp), color = Color(0xFFFFEBEE)) {
+                    Icon(Icons.Default.Warning, contentDescription = null, tint = Color.Red, modifier = Modifier.padding(6.dp))
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text("Slot Unavailable", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(
+                        "Sorry, appointment slot/consulting time is over. Would you like to make appointment with the next available slot?",
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // 3. ACTION BUTTONS
+            Button(
+                onClick = { /* Logic to find next slot */ },
+                modifier = Modifier.fillMaxWidth().height(52.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
+            ) {
+                Text("Yes, Find Next Slot →", fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.fillMaxWidth().height(52.dp),
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(1.dp, Color(0xFFE2E8F0))
+            ) {
+                Text("Cancel", color = Color.Black)
+            }
+
+            // 4. NEXT AVAILABLE SLOTS LIST
+            Spacer(modifier = Modifier.height(32.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text("Next Available Slots", fontWeight = FontWeight.Bold)
+                Text("View Calendar", color = Color(0xFF2196F3), fontSize = 12.sp)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                SmallSlotItem("Tomorrow", "10:00 AM")
+                SmallSlotItem("Tomorrow", "02:30 PM")
+                SmallSlotItem("Wed, 24", "09:15 AM")
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+// Helper for the three slot boxes at the bottom
+@Composable
+fun SmallSlotItem(day: String, time: String) {
+    Surface(
+        modifier = Modifier.width(110.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, Color(0xFFF1F5F9)),
+        color = Color.White
+    ) {
+        Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(day, color = Color.Gray, fontSize = 10.sp)
+            Text(time, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+        }
     }
 }
