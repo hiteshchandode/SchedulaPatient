@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 // --- SHARED COMPONENTS ---
-
 @Composable
 fun AppButton(text: String, onClick: () -> Unit) {
     Button(
@@ -88,7 +87,6 @@ fun BookingBottomBar(navController: NavController, currentScreen: String) {
 }
 
 // --- PAGE 4: BOOKING DETAILS ---
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookingStepOne(navController: NavController, viewModel: BookingViewModel) {
@@ -173,7 +171,6 @@ fun BookingStepOne(navController: NavController, viewModel: BookingViewModel) {
 }
 
 //Time slot
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimeSlotScreen(navController: NavController, viewModel: BookingViewModel) {
@@ -259,7 +256,6 @@ fun TimeSlotScreen(navController: NavController, viewModel: BookingViewModel) {
 }
 
 // --- PAGE 10: PATIENT DETAILS ---
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PatientDetailsScreen(navController: NavController, viewModel: BookingViewModel) {
@@ -308,8 +304,7 @@ fun PatientDetailsScreen(navController: NavController, viewModel: BookingViewMod
     }
 }
 
-// --- PAGE 7: CONFIRMATION ---
-
+// --- PAGE 7: CONFIRMATION
 @Composable
 fun ConfirmationScreen(navController: NavController, viewModel: BookingViewModel) {
     Column(
@@ -331,7 +326,6 @@ fun ConfirmationScreen(navController: NavController, viewModel: BookingViewModel
 }
 
 
-
 @Composable
 fun ProfileScreen(navController: NavController) {
     Scaffold(
@@ -342,7 +336,6 @@ fun ProfileScreen(navController: NavController) {
         }
     }
 }
-
 
 
 @Composable
@@ -657,7 +650,7 @@ fun DetailRow(label: String, value: String) {
     }
 }
 
-// unable to book screen
+// Page:8 unable to book screen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SlotUnavailableScreen(navController: NavController, viewModel: BookingViewModel) {
@@ -739,7 +732,7 @@ fun SlotUnavailableScreen(navController: NavController, viewModel: BookingViewMo
 
             // 3. ACTION BUTTONS
             Button(
-                onClick = { /* Logic to find next slot */ },
+                onClick = { navController.navigate("plan_date") },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
@@ -792,3 +785,117 @@ fun SmallSlotItem(day: String, time: String) {
         }
     }
 }
+
+
+
+
+
+
+
+//plan appotitment page is here
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PlanDateScreen(navController: NavController, viewModel: BookingViewModel) {
+    val scrollState = rememberScrollState()
+
+    // 1. Logic to handle Month changing
+    var currentMonth by remember { mutableStateOf("MARCH 2026") }
+    var selectedDateNum by remember { mutableStateOf("4") }
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("Plan appointment", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        },
+        bottomBar = { BookingBottomBar(navController, "doctor_list") }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .background(Color(0xFFF8FAFC))
+                .verticalScroll(scrollState)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // --- DOCTOR CARD (Alphabet L) ---
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(2.dp)
+            ) {
+                Column(modifier = Modifier.padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Surface(modifier = Modifier.size(60.dp), shape = RoundedCornerShape(30.dp), color = Color(0xFFE3F2FD)) {
+                        Box(contentAlignment = Alignment.Center) { Text("L", color = Color(0xFF2196F3), fontSize = 24.sp, fontWeight = FontWeight.Bold) }
+                    }
+                    Text("Dr. Kumar", fontWeight = FontWeight.Bold, fontSize = 18.sp, modifier = Modifier.padding(top = 8.dp))
+                    Text("Cardiologist • 12 yrs exp", color = Color.Gray, fontSize = 12.sp)
+                }
+            }
+
+            // --- FULL MARCH 2026 CALENDAR ---
+            Spacer(modifier = Modifier.height(24.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(2.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    // Month Changer Logic
+                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = { currentMonth = "FEBRUARY 2026" }) { Icon(Icons.Default.KeyboardArrowLeft, null) }
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(currentMonth, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Spacer(modifier = Modifier.weight(1f))
+                        IconButton(onClick = { currentMonth = "APRIL 2026" }) { Icon(Icons.Default.KeyboardArrowRight, null) }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text("S   M   T   W   T   F   S", color = Color.Gray, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth(), fontSize = 12.sp)
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // --- FULL GRID (5 ROWS) [cite: 2026-02-17] ---
+                    CalendarRow(listOf("1", "2", "3", "4", "5", "6", "7"), selectedDateNum) { selectedDateNum = it }
+                    CalendarRow(listOf("8", "9", "10", "11", "12", "13", "14"), selectedDateNum) { selectedDateNum = it }
+                    CalendarRow(listOf("15", "16", "17", "18", "19", "20", "21"), selectedDateNum) { selectedDateNum = it }
+                    CalendarRow(listOf("22", "23", "24", "25", "26", "27", "28"), selectedDateNum) { selectedDateNum = it }
+                    CalendarRow(listOf("29", "30", "31", "", "", "", ""), selectedDateNum) { selectedDateNum = it }
+                }
+            }
+
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            AppButton("Confirm Appointment →") {
+                navController.navigate("final_confirmation")
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+        }
+    }
+}
+
+// Helper to create a row of 7 days easily
+@Composable
+fun CalendarRow(days: List<String>, selectedDate: String, onSelect: (String) -> Unit) {
+    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        days.forEach { day ->
+            Box(modifier = Modifier.size(32.dp).clickable { if(day.isNotEmpty()) onSelect(day) }, contentAlignment = Alignment.Center) {
+                if (day == selectedDate) {
+                    Surface(modifier = Modifier.fillMaxSize(), shape = RoundedCornerShape(16.dp), color = Color(0xFF2196F3)) {}
+                }
+                Text(text = day, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = if (day == selectedDate) Color.White else Color.Black)
+            }
+        }
+    }
+}
+
+

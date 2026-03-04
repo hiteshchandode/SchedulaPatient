@@ -74,6 +74,11 @@ class MainActivity : ComponentActivity() {
                             SlotUnavailableScreen(navController, bookingViewModel)
                         }
 
+                        //page:9 plan appotitment
+                        composable("plan_date") {
+                            PlanDateScreen(navController = navController, viewModel = bookingViewModel)
+                        }
+
                         // Page 10: Patient Details
                         composable("patient_details") {
                             PatientDetailsScreen(navController = navController, viewModel = bookingViewModel)
