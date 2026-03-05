@@ -20,7 +20,7 @@ fun RecordsScreen(navController: NavController, viewModel: BookingViewModel) {
         topBar = {
             CenterAlignedTopAppBar(title = { Text("My Records", fontWeight = FontWeight.Bold) })
         },
-        bottomBar = { BookingBottomBar(navController,"records") } // Wahi bottom bar yahan bhi dikhega
+        bottomBar = { BookingBottomBar(navController,"records ") } // Wahi bottom bar yahan bhi dikhega
     ) { padding ->
         // Agar koi booking nahi hai toh message dikhayenge
         if (viewModel.patientName.isEmpty()) {

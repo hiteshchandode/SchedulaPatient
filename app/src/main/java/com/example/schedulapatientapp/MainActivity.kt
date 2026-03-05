@@ -2,7 +2,7 @@
 package com.example.schedulapatientapp
 
 import com.example.schedulapatientapp.TimeSlotScreen
-import com.example.schedulapatientapp.PatientDetailsScreen
+import com.example.schedulapatientapp.PatientFormScreen
 import com.example.schedulapatientapp.ConfirmationScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -80,14 +80,14 @@ class MainActivity : ComponentActivity() {
                         }
 
                         // Page 10: Patient Details
-                        composable("patient_details") {
-                            PatientDetailsScreen(navController = navController, viewModel = bookingViewModel)
+                        composable("patient_form") {
+                            PatientFormScreen(navController = navController, viewModel = bookingViewModel)
                         }
 
-                        // Page 7: Final Confirmation
-                        composable("confirmation") {
-                            ConfirmationScreen(navController = navController, viewModel = bookingViewModel)
-                        }
+//                        // Page 7: Final Confirmation
+                          composable("confirmation") {
+                              ConfirmationScreen(navController = navController, viewModel = bookingViewModel)
+                          }
 
                         composable("records") {
                             RecordsScreen(navController = navController, viewModel = bookingViewModel)

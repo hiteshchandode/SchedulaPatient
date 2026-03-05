@@ -255,54 +255,7 @@ fun TimeSlotScreen(navController: NavController, viewModel: BookingViewModel) {
     }
 }
 
-// --- PAGE 10: PATIENT DETAILS ---
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PatientDetailsScreen(navController: NavController, viewModel: BookingViewModel) {
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Patient Details", fontWeight = FontWeight.Bold) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        },
-        bottomBar = { BookingBottomBar(navController, "booking_step1") }
-    ) { padding ->
-        Column(modifier = Modifier.padding(padding).fillMaxSize().padding(16.dp).background(Color.White)) {
-            OutlinedTextField(
-                value = viewModel.patientName,
-                onValueChange = { viewModel.patientName = it },
-                label = { Text("Full Name") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            OutlinedTextField(
-                value = viewModel.patientAge,
-                onValueChange = { viewModel.patientAge = it },
-                label = { Text("Age") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            OutlinedTextField(
-                value = viewModel.patientComplaint,
-                onValueChange = { viewModel.patientComplaint = it },
-                label = { Text("Complaint") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                minLines = 3
-            )
 
-            Spacer(modifier = Modifier.weight(1f))
-            AppButton("Confirm Appointment") { navController.navigate("confirmation") }
-        }
-    }
-}
 
 // --- PAGE 7: CONFIRMATION
 @Composable
@@ -446,7 +399,7 @@ fun SelectExactTimeScreen(navController: NavController, viewModel: BookingViewMo
                 Surface(shape = RoundedCornerShape(8.dp), border = BorderStroke(1.dp, Color(0xFFE2E8F0)), color = Color.White) {
                     Row(modifier = Modifier.padding(8.dp)) {
                         Icon(Icons.Default.DateRange, null, tint = Color(0xFF2196F3), modifier = Modifier.size(18.dp))
-                        Text(" march 26", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        Text(" mar 26", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     }
                 }
             }
@@ -496,7 +449,7 @@ fun SelectExactTimeScreen(navController: NavController, viewModel: BookingViewMo
             // --- BUTTON ---
             Spacer(modifier = Modifier.height(32.dp))
             AppButton("Book Appointment →") {
-                navController.navigate("slot_unavailable")
+                navController.navigate("patient_form")
             }
             Spacer(modifier = Modifier.height(20.dp))
         }
