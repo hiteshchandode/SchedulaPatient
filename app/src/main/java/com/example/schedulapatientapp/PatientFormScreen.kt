@@ -147,7 +147,7 @@ fun PatientFormScreen(navController: NavController, viewModel: BookingViewModel)
 
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { navController.navigate("final_confirmation") },
+                onClick = { navController.navigate("medical_chat") },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))

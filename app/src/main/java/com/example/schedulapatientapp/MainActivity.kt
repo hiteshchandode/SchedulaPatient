@@ -83,7 +83,11 @@ class MainActivity : ComponentActivity() {
                         composable("patient_form") {
                             PatientFormScreen(navController = navController, viewModel = bookingViewModel)
                         }
-                        
+
+                        // Page 11: medical chat screen
+                        composable("medical_chat") {
+                            MedicalChatScreen(navController = navController)
+                        }
 
 //                        // Page 7: Final Confirmation
                           composable("confirmation") {
