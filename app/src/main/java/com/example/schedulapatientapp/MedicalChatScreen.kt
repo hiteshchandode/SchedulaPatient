@@ -75,10 +75,10 @@ fun MedicalChatScreen(navController: NavController) {
                                 color = Color(0xFFE3F2FD)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
-                                    Text("L", color = Color(0xFF2196F3), fontWeight = FontWeight.Bold, fontSize = 24.sp)
+                                    Text("K", color = Color(0xFF2196F3), fontWeight = FontWeight.Bold, fontSize = 24.sp)
                                 }
                             }
-                            Text("Dr. Lavangi", fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp))
+                            Text("Dr. Kumar", fontSize = 12.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 4.dp))
                         }
 
                         Spacer(modifier = Modifier.width(12.dp))
@@ -89,10 +89,10 @@ fun MedicalChatScreen(navController: NavController) {
                             shape = RoundedCornerShape(16.dp)
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
-                                Text("Gynecologist", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                                Text("Cardiologist", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(Icons.Default.AccessTime, null, tint = Color.Gray, modifier = Modifier.size(14.dp))
-                                    Text(" 15 yrs experience", color = Color.Gray, fontSize = 12.sp)
+                                    Text(" 12 yrs experience", color = Color.Gray, fontSize = 12.sp)
                                 }
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Surface(color = Color(0xFF00BCD4), shape = RoundedCornerShape(20.dp)) {
@@ -113,7 +113,7 @@ fun MedicalChatScreen(navController: NavController) {
                         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text("PATIENT DETAILS", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                                Text("Meena, Female, Stomach pain", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                Text("Rudra, male, Stomach pain", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                             }
                             Icon(Icons.Default.ChatBubble, contentDescription = null, tint = Color(0xFF2196F3), modifier = Modifier.size(20.dp))
                         }
