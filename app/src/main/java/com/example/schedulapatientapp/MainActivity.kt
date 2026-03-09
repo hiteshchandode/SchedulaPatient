@@ -1,5 +1,5 @@
-
 package com.example.schedulapatientapp
+
 
 import com.example.schedulapatientapp.TimeSlotScreen
 import com.example.schedulapatientapp.PatientFormScreen
@@ -88,6 +88,12 @@ class MainActivity : ComponentActivity() {
                         composable("medical_chat") {
                             MedicalChatScreen(navController = navController)
                         }
+
+                        //for my Appt. in bottom bar
+                        composable("my_appointments") {
+                            MyAppointmentsScreen(navController = navController)
+                        }
+
 
 //                        // Page 7: Final Confirmation
                           composable("confirmation") {
