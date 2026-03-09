@@ -195,15 +195,6 @@ fun MedicalChatScreen(navController: NavController) {
                     )
 
 
-//                    OutlinedTextField(
-//                        value = chatInputText,
-//                        onValueChange = { chatInputText = it },
-//                        modifier = Modifier.weight(1f),
-//                        placeholder = { Text("Type a message...") },
-//                        trailingIcon = { Icon(Icons.Default.AttachFile, null, tint = Color.Gray) },
-//                        shape = RoundedCornerShape(24.dp),
-//                        colors = TextFieldDefaults.outlinedTextFieldColors(unfocusedBorderColor = Color(0xFFE2E8F0))
-//                    )
                     Spacer(modifier = Modifier.width(8.dp))
                     // Blue Send Button
                     IconButton(
@@ -226,19 +217,19 @@ fun ChatBottomNavigation(navController: NavController) {
             icon = { Icon(Icons.Default.Search, null) },
             label = { Text("Search", fontSize = 10.sp) },
             selected = false,
-            onClick = { }
+            onClick = { navController.navigate("doctor_list") }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.AccountBalanceWallet, null) },
             label = { Text("Payments", fontSize = 10.sp) },
             selected = false,
-            onClick = { }
+            onClick = { navController.navigate("records") }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.DateRange, null) },
             label = { Text("My Appt", fontSize = 10.sp) },
             selected = true,
-            onClick = { },
+            onClick = { navController.navigate("my_appointments") },
             colors = NavigationBarItemDefaults.colors(selectedIconColor = Color(0xFF2196F3), selectedTextColor = Color(0xFF2196F3))
         )
         NavigationBarItem(

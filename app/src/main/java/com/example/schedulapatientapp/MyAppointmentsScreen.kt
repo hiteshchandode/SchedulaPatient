@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 
 // PAGE: MY APPOINTMENTS
@@ -206,7 +207,7 @@ fun AppointmentCard(
                     Text("Reschedule", color = Color(0xFF2196F3))
                 }
                 Button(
-                    onClick = onViewClick,
+                    onClick = { },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
