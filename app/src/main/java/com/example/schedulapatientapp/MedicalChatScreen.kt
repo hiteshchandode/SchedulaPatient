@@ -44,7 +44,7 @@ fun MedicalChatScreen(navController: NavController) {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { }) { Icon(Icons.Default.MoreVert, contentDescription = "Options") }
+                    IconButton(onClick = { navController.navigate("appointment_details")}) { Icon(Icons.Default.Info, contentDescription = "View Details",tint = Color(0xFF2196F3)) }
                 }
             )
         },

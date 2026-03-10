@@ -94,6 +94,8 @@ class MainActivity : ComponentActivity() {
                             MyAppointmentsScreen(navController = navController)
                         }
 
+                        //page 14: Appot.Screen
+                        composable("appointment_details") { AppointmentDetailsScreen(navController) }
 
 //                        // Page 7: Final Confirmation
                           composable("confirmation") {
