@@ -150,7 +150,7 @@ fun AppointmentDetailsScreen(navController: NavController) {
 
             // Cancel Button in Red
             OutlinedButton(
-                onClick = { },
+                onClick = { navController.navigate("appointment_cancel") },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).height(45.dp),
                 shape = RoundedCornerShape(8.dp),
                 border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEF5350))
