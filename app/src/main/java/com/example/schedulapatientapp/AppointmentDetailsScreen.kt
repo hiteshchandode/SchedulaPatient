@@ -164,7 +164,7 @@ fun AppointmentDetailsScreen(navController: NavController) {
             Button(
                 onClick = {
                     // GO TO NEXT SCREEN
-                    navController.navigate("payments")
+                    navController.navigate("payment_method")
                 },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
                 shape = RoundedCornerShape(8.dp),
