@@ -164,13 +164,13 @@ fun AppointmentDetailsScreen(navController: NavController) {
             Button(
                 onClick = {
                     // GO TO NEXT SCREEN
-                    navController.navigate("payment_method")
+                    navController.navigate("reschedule_appointment")
                 },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
             ) {
-                Text("Make payment", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text("Reschedule", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             }
 
             Spacer(modifier = Modifier.height(40.dp))

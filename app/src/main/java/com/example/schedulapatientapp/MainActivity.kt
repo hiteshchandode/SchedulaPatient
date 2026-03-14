@@ -97,11 +97,6 @@ class MainActivity : ComponentActivity() {
                         //page 14: Appot.Screen screen route
                         composable("appointment_details") { AppointmentDetailsScreen(navController) }
 
-
-
-
-//                        NavHost(navController = navController, startDestination = "my_appointments") {
-
                             // 1. Existing screens...
                             composable("my_appointments") { MyAppointmentsScreen(navController) }
                             composable("appointment_details") { AppointmentDetailsScreen(navController) }
@@ -111,29 +106,16 @@ class MainActivity : ComponentActivity() {
                                 AppointmentCancelScreen(navController)
                             }
 
-                            // 3. ADD THIS: Route for Payment (Placeholder to stop crash)
-//                            composable("payment_method") {
-//                                // We will build the full design for this tomorrow!
-//                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-//                                    Text("Payment Method Screen Coming Soon")
-//                                }
-//                            }
-//                        }
+                        //page 15: Reschedule appoitment
+                        composable("reschedule_appointment") {
+                            RescheduleAppointmentScreen(navController)
+                        }
 
 
 
 
 
-
-
-
-
-
-
-
-                        //page 15: Appointment cancel screen route
-
-//                        // Page 7: Final Confirmation
+                          // Page 7: Final Confirmation
                           composable("confirmation") {
                               ConfirmationScreen(navController = navController, viewModel = bookingViewModel)
                           }
