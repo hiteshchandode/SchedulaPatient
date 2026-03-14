@@ -56,14 +56,14 @@ fun AppointmentDetailsScreen(navController: NavController) {
                     Text("L", fontSize = 36.sp, fontWeight = FontWeight.Bold, color = Color.White)
                 }
             }
-            Text("Dr. Lavangi", fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(top = 8.dp))
+            Text("Dr. Kumar", fontWeight = FontWeight.Bold, fontSize = 16.sp, modifier = Modifier.padding(top = 8.dp))
             Spacer(modifier = Modifier.height(16.dp))
 
             // 2. GYNECOLOGIST CARD
             InfoCard {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Column {
-                        Text("Gynecologist", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text("Cardiologist", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                         Spacer(modifier = Modifier.height(8.dp))
                         Surface(color = Color(0xFF26C6DA), shape = CircleShape) {
                             Row(modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -73,7 +73,7 @@ fun AppointmentDetailsScreen(navController: NavController) {
                         }
                     }
                     Surface(color = Color(0xFFEDF2F7), shape = RoundedCornerShape(8.dp)) {
-                        Text("15 yrs exp", modifier = Modifier.padding(6.dp), fontSize = 12.sp, color = Color.Gray)
+                        Text("12 yrs exp", modifier = Modifier.padding(6.dp), fontSize = 12.sp, color = Color.Gray)
                     }
                 }
             }
@@ -143,37 +143,112 @@ fun AppointmentDetailsScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 7. ACTION BUTTONS (WORKING)
-            BlueButton("Reschedule", isPrimary = true) { /* Action */ }
-            BlueButton("Waiting", isPrimary = false) { /* Action */ }
-            BlueButton("Consulted", isPrimary = false) { /* Action */ }
 
-            // Cancel Button in Red
+
+
+
+
+
+
+            // 7. STATUS INDICATORS (NO NAVIGATION HERE)
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // We use Modifier.weight(1f) to make them sit side-by-side
+                BlueButton("Waiting", isPrimary = false, modifier = Modifier.weight(1f)) { /* Status Only */ }
+                BlueButton("Consulted", isPrimary = false, modifier = Modifier.weight(1f)) { /* Status Only */ }
+            }
+
+// Cancel Button in Red
             OutlinedButton(
                 onClick = { navController.navigate("appointment_cancel") },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).height(45.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp).height(45.dp),
                 shape = RoundedCornerShape(8.dp),
                 border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEF5350))
             ) {
-                Text("Cancel", color = Color(0xFFEF5350), fontWeight = FontWeight.Bold)
+                Text("Cancel Appointment", color = Color(0xFFEF5350), fontWeight = FontWeight.Bold)
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
 
-            // 8. WORKING MAKE PAYMENT BUTTON
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // 7. ACTION BUTTONS (WORKING)
+//            BlueButton("Reschedule", isPrimary = true) { /* Action */ }
+//            BlueButton("Waiting", isPrimary = false) { /* Action */ }
+//            BlueButton("Consulted", isPrimary = false) { /* Action */ }
+//
+//            // Cancel Button in Red
+//            OutlinedButton(
+//                onClick = { navController.navigate("appointment_cancel") },
+//                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).height(45.dp),
+//                shape = RoundedCornerShape(8.dp),
+//                border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFEF5350))
+//            ) {
+//                Text("Cancel", color = Color(0xFFEF5350), fontWeight = FontWeight.Bold)
+//            }
+//
+//            Spacer(modifier = Modifier.height(12.dp))
+
+
+
+
+
+
+
+
+
+            // 8. THE MAIN RESCHEDULE ACTION
             Button(
                 onClick = {
-                    // GO TO NEXT SCREEN
+                    //for next screen
+                    // This opens the slot selection screen we built
                     navController.navigate("reschedule_appointment")
                 },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
             ) {
-                Text("Reschedule", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text("Reschedule Appointment", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // 8. WORKING MAKE PAYMENT BUTTON
+//            Button(
+//                onClick = {
+//                    // GO TO NEXT SCREEN
+//                    navController.navigate("reschedule_appointment")
+//                },
+//                modifier = Modifier.fillMaxWidth().height(50.dp),
+//                shape = RoundedCornerShape(8.dp),
+//                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
+//            ) {
+//                Text("Reschedule", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+//            }
+//
+//            Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }
@@ -193,7 +268,7 @@ fun InfoCard(content: @Composable () -> Unit) {
 
 // COMPONENT: CUSTOM BLUE BUTTONS
 @Composable
-fun BlueButton(text: String, isPrimary: Boolean, onClick: () -> Unit) {
+fun BlueButton(text: String, isPrimary: Boolean, modifier:Modifier = Modifier, onClick: () -> Unit) {
     if (isPrimary) {
         Button(
             onClick = onClick,
