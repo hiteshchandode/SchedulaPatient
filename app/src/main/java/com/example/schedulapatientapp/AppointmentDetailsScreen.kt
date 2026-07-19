@@ -157,7 +157,10 @@ fun AppointmentDetailsScreen(navController: NavController) {
             // 2. Waiting / Consulted (Side-by-Side)
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 BlueButton("Waiting", isPrimary = false, modifier = Modifier.weight(1f)) { }
-                BlueButton("Consulted", isPrimary = false, modifier = Modifier.weight(1f)) { }
+                BlueButton("Consulted", isPrimary = false, modifier = Modifier.weight(1f)) {
+                    navController.navigate("consulting_feedback")
+                }
+
             }
 
             Spacer(modifier = Modifier.height(12.dp))

@@ -111,6 +111,9 @@ class MainActivity : ComponentActivity() {
                             RescheduleAppointmentScreen(navController)
                         }
 
+                        composable("consulting_feedback") {
+                            ConsultingFeedbackScreen(navController)
+                        }
 
 
 
