@@ -111,8 +111,26 @@ class MainActivity : ComponentActivity() {
                             RescheduleAppointmentScreen(navController)
                         }
 
+                        //page 16: Appointment reschduled is merge with Book appointment
+
+                        //page 17: Consulting feedback
                         composable("consulting_feedback") {
                             ConsultingFeedbackScreen(navController)
+                        }
+
+                        //page 18: Appointment reminder
+                        composable("appointment_reminders") {
+                            AppointmentRemindersScreen(navController)
+                        }
+
+                        //page 19: Appointment reschudul by doctor
+                        composable("reschedule_by_doctor") {
+                            RescheduleByDoctorScreen(navController)
+                        }
+
+                        //page 20: Patient Reengagement screen is here
+                        composable("patient_reengagement") {
+                            PatientReengagementScreen(navController)
                         }
 
 

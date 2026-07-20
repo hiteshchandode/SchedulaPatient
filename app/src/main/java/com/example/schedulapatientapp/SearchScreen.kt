@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -91,11 +92,53 @@ fun SearchScreen(navcontroller: NavHostController) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
+
+
+
                 actions = {
-                    IconButton(onClick = { /* Handle search */ }) {
-                        Icon(Icons.Default.Search, contentDescription = "Search")
+                    // Badge notification bell matching the design header
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 12.dp)
+                            .clickable { navcontroller.navigate("appointment_reminders") },
+                        contentAlignment = Alignment.TopEnd
+                    ) {
+                        IconButton(
+                            onClick = { navcontroller.navigate("appointment_reminders") },
+                            modifier = Modifier
+                                .size(38.dp)
+                                .background(Color(0xFFF0FDF4), CircleShape)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = "Alerts",
+                                tint = Color(0xFF2196F3),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                        // Orange counter badge displaying the active unread notification counts
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .background(Color(0xFFF97316), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("2", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
+
+
+
+
+
+
+
+//                actions = {
+//                    IconButton(onClick = { /* Handle search */ }) {
+//                        Icon(Icons.Default.Search, contentDescription = "Search")
+//                    }
+//                }
             )
         },
         bottomBar = {
@@ -111,14 +154,16 @@ fun SearchScreen(navcontroller: NavHostController) {
                     icon = { Icon(Icons.Default.List, null) },
                     label = { Text("Records") },
                     selected = selectedTab == 1,
-                    onClick = {selectedTab = 1}
+                    onClick = {selectedTab = 1
+                        navcontroller.navigate("patient_reengagement")}
 
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.DateRange, null) },
                     label = { Text("Appointment") },
                     selected = selectedTab == 2,
-                    onClick = {selectedTab = 2}
+                    onClick = {selectedTab = 2
+                        navcontroller.navigate("reschedule_by_doctor")}
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.Person, null) },
@@ -178,7 +223,7 @@ fun SearchScreen(navcontroller: NavHostController) {
             modifier = Modifier.height(400.dp),
             contentPadding = PaddingValues(top = 8.dp)
         ) {
-            items(Doctors) { doctor ->
+            items(doctors) { doctor ->
                 DoctorItem(doctor, navcontroller)
             }
         }
