@@ -259,7 +259,7 @@ fun CoPatientCollaborationScreen(navController: NavController) {
 
             // --- 3. CONFIRM ACTION JOIN BUTTON ---
             Button(
-                onClick = { /* Confirm and navigate forward */ },
+                onClick = { navController.navigate("customer_support") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),

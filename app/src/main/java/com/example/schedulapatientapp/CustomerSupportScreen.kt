@@ -74,7 +74,7 @@ fun CustomerSupportScreen(navController: NavController) {
             TopAppBar(
                 title = {
                     Text(
-                        "Customer S...",
+                        "Help & support",
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
                         color = Color(0xFF1E293B)

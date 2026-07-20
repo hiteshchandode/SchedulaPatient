@@ -143,6 +143,10 @@ class MainActivity : ComponentActivity() {
                             CoPatientCollaborationScreen(navController)
                         }
 
+                        //page 23: Help & supprot
+                        composable("customer_support") {
+                            CustomerSupportScreen(navController)
+                        }
 
 
 
