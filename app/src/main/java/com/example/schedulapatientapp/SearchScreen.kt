@@ -169,7 +169,8 @@ fun SearchScreen(navcontroller: NavHostController) {
                     icon = { Icon(Icons.Default.Person, null) },
                     label = { Text("Profile") },
                     selected = selectedTab == 3,
-                    onClick = {selectedTab = 3}
+                    onClick = {selectedTab = 3
+                        navcontroller.navigate("seamless_appointment")}
                 )
             }
         }

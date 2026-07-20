@@ -133,6 +133,16 @@ class MainActivity : ComponentActivity() {
                             PatientReengagementScreen(navController)
                         }
 
+                        //page 21: Seamless appointment
+                        composable("seamless_appointment") {
+                            SeamlessAppointmentScreen(navController)
+                        }
+
+                        //page 22: Co patient collaboration
+                        composable("co_patient_collaboration") {
+                            CoPatientCollaborationScreen(navController)
+                        }
+
 
 
 
