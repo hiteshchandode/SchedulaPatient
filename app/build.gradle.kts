@@ -63,4 +63,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+
+    // Room Database dependencies
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+// Note: If you don't have KSP configured, use 'kapt' instead of 'ksp'
+   // kapt("androidx.room:room-compiler:$room_version")
 }
+

@@ -95,7 +95,7 @@ fun CustomerSupportScreen(navController: NavController) {
                 },
                 actions = {
                     Button(
-                        onClick = { /* Handle new support ticket creation logic */ },
+                        onClick = { navController.navigate("friends_and_family") },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3)),
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                         shape = RoundedCornerShape(24.dp),

@@ -148,6 +148,16 @@ class MainActivity : ComponentActivity() {
                             CustomerSupportScreen(navController)
                         }
 
+                        //page 24: family and friends
+                        composable("friends_and_family") {
+                            FriendsAndFamilyScreen(navController)
+                        }
+
+                        //page 25: Google review lastScreen
+                        composable("google_review") {
+                            GoogleReviewScreen(navController)
+                        }
+
 
 
                           // Page 7: Final Confirmation
