@@ -1,24 +1,5 @@
 package com.example.schedulapatientapp
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Icon
-import androidx.navigation.NavHostController
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.IconButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,12 +7,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,9 +27,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-
-
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.example.schedulapatientapp.database.DoctorEntity
 
 fun getGreetingText(): String {
     val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
@@ -53,34 +41,23 @@ fun getGreetingText(): String {
     }
 }
 
-
-// 2. THE DATA (9 Doctors)
-val doctors = listOf(
-    Doctor("Dr. Kumar", "Cardiologist", Color(0xFFF44336)),
-    Doctor("Dr. Devi shetty", "Neurologist", Color(0xFF9C27B0)),
-    Doctor("Dr. Sudhir Gupta", "Orthopedic", Color(0xFF3F51B5)),
-    Doctor("Dr. Sarah", "Pediatrician", Color(0xFF00BCD4)),
-    Doctor("Dr. Arvind Kumar", "General", Color(0xFF4CAF50)),
-    Doctor("Dr. Nitin Sood", "Dermatologist", Color(0xFFFFEB3B)),
-    Doctor("Dr. Atul Goel", "Surgeon", Color(0xFFFF9800)),
-    Doctor("Dr. S.K. Gupta", "Psychiatrist", Color(0xFF795548)),
-    Doctor("Dr. Prathap Reddy", "Dentist", Color(0xFF607D8B))
-)
-
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(navcontroller: NavHostController) {
+fun SearchScreen(
+    navcontroller: NavHostController,
+    bookingViewModel: BookingViewModel = viewModel(), // Connected BookingViewModel
+    mainViewModel: MainViewModel = viewModel()
+) {
+    val doctorsFromRoom by mainViewModel.doctorsList.collectAsState()
 
-    // Memory for the Search Bar
     var searchQuery by remember { mutableStateOf("") }
-
-    // Memory for the Bottom Bar (0 = Find Doctor, 1 = Records, etc.)
     var selectedTab by remember { mutableStateOf(0) }
 
+    val filteredDoctors = doctorsFromRoom.filter { doctor ->
+        doctor.name.contains(searchQuery, ignoreCase = true) ||
+                doctor.specialty.contains(searchQuery, ignoreCase = true)
+    }.distinctBy { it.name }
 
-    // 1. The Scaffold acts as the container for Top, Bottom, and Body
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -92,11 +69,7 @@ fun SearchScreen(navcontroller: NavHostController) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
-
-
-
                 actions = {
-                    // Badge notification bell matching the design header
                     Box(
                         modifier = Modifier
                             .padding(end = 12.dp)
@@ -116,7 +89,6 @@ fun SearchScreen(navcontroller: NavHostController) {
                                 modifier = Modifier.size(20.dp)
                             )
                         }
-                        // Orange counter badge displaying the active unread notification counts
                         Box(
                             modifier = Modifier
                                 .size(16.dp)
@@ -127,68 +99,53 @@ fun SearchScreen(navcontroller: NavHostController) {
                         }
                     }
                 }
-
-
-
-
-
-
-
-//                actions = {
-//                    IconButton(onClick = { /* Handle search */ }) {
-//                        Icon(Icons.Default.Search, contentDescription = "Search")
-//                    }
-//                }
             )
         },
         bottomBar = {
-            // 2. This is the Bottom Bar with your 4 tools
             NavigationBar(containerColor = Color.White) {
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.Search, null) },
                     label = { Text("Find Doctor") },
                     selected = selectedTab == 0,
-                    onClick = {selectedTab = 0}
+                    onClick = { selectedTab = 0 }
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.List, null) },
                     label = { Text("Records") },
                     selected = selectedTab == 1,
-                    onClick = {selectedTab = 1
-                        navcontroller.navigate("patient_reengagement")}
-
+                    onClick = {
+                        selectedTab = 1
+                        navcontroller.navigate("patient_reengagement")
+                    }
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.DateRange, null) },
                     label = { Text("Appointment") },
                     selected = selectedTab == 2,
-                    onClick = {selectedTab = 2
-                        navcontroller.navigate("reschedule_by_doctor")}
+                    onClick = {
+                        selectedTab = 2
+                        navcontroller.navigate("reschedule_by_doctor")
+                    }
                 )
                 NavigationBarItem(
                     icon = { Icon(Icons.Default.Person, null) },
                     label = { Text("Profile") },
                     selected = selectedTab == 3,
-                    onClick = {selectedTab = 3
-                        navcontroller.navigate("seamless_appointment")}
+                    onClick = {
+                        selectedTab = 3
+                        navcontroller.navigate("seamless_appointment")
+                    }
                 )
             }
         }
-    )
-
-
-
-    { innerPadding ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState())
-
         ) {
-
-            // 2.  Greeting (Climate)
             Text(
                 text = getGreetingText(),
                 fontSize = 18.sp,
@@ -196,19 +153,17 @@ fun SearchScreen(navcontroller: NavHostController) {
                 modifier = Modifier.padding(top = 20.dp, bottom = 10.dp)
             )
 
-            // 3.  Search Bar
             OutlinedTextField(
-                value = "", //it shows what i type
-                onValueChange = {newValue -> searchQuery = newValue}, //it save what i type
+                value = searchQuery,
+                onValueChange = { newValue -> searchQuery = newValue },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Search by name...") },
+                placeholder = { Text("Search by name or specialty...") },
                 leadingIcon = { Icon(Icons.Default.Search, null) },
                 shape = RoundedCornerShape(12.dp)
             )
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // 4. The "Top Specialists" Title
             Text(
                 text = "Top Specialists",
                 fontWeight = FontWeight.Bold,
@@ -217,79 +172,349 @@ fun SearchScreen(navcontroller: NavHostController) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // 5.  doctor grid code
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            modifier = Modifier.height(400.dp),
-            contentPadding = PaddingValues(top = 8.dp)
-        ) {
-            items(doctors) { doctor ->
-                DoctorItem(doctor, navcontroller)
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                modifier = Modifier.height(400.dp),
+                contentPadding = PaddingValues(top = 8.dp)
+            ) {
+                items(filteredDoctors) { doctor ->
+                    DoctorItem(
+                        doctor = doctor,
+                        navController = navcontroller,
+                        bookingViewModel = bookingViewModel
+                    )
+                }
             }
-        }
 
             Spacer(modifier = Modifier.height(20.dp))
+        }
+    }
+}
 
-//            // 6. Nearby Clinics Title
+@Composable
+fun DoctorItem(
+    doctor: DoctorEntity,
+    navController: NavHostController,
+    bookingViewModel: BookingViewModel
+) {
+    val themeColor = Color(0xFF2196F3)
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable {
+                // SAVE SELECTED DOCTOR DETAILS TO SHARED VIEWMODEL
+                bookingViewModel.selectedDoctorName = doctor.name
+                bookingViewModel.selectedDoctorSpecialty = doctor.specialty
+
+                navController.navigate("doctor_profile")
+            }
+    ) {
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .background(themeColor.copy(alpha = 0.15f), CircleShape)
+                .border(2.dp, themeColor, CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = doctor.name.replace("Dr. ", "").take(1).uppercase(),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = themeColor
+            )
+        }
+        Text(
+            text = doctor.name,
+            fontWeight = FontWeight.Bold,
+            fontSize = 12.sp,
+            maxLines = 1
+        )
+        Text(
+            text = doctor.specialty,
+            color = Color.Gray,
+            fontSize = 10.sp,
+            maxLines = 1
+        )
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//package com.example.schedulapatientapp
+//
+//import androidx.compose.foundation.background
+//import androidx.compose.foundation.border
+//import androidx.compose.foundation.clickable
+//import androidx.compose.foundation.layout.*
+//import androidx.compose.foundation.lazy.grid.GridCells
+//import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+//import androidx.compose.foundation.lazy.grid.items
+//import androidx.compose.foundation.rememberScrollState
+//import androidx.compose.foundation.shape.CircleShape
+//import androidx.compose.foundation.shape.RoundedCornerShape
+//import androidx.compose.foundation.verticalScroll
+//import androidx.compose.material.icons.Icons
+//import androidx.compose.material.icons.filled.ArrowBack
+//import androidx.compose.material.icons.filled.DateRange
+//import androidx.compose.material.icons.filled.List
+//import androidx.compose.material.icons.filled.LocationOn
+//import androidx.compose.material.icons.filled.Notifications
+//import androidx.compose.material.icons.filled.Person
+//import androidx.compose.material.icons.filled.Search
+//import androidx.compose.material3.*
+//import androidx.compose.runtime.*
+//import androidx.compose.ui.Alignment
+//import androidx.compose.ui.Modifier
+//import androidx.compose.ui.graphics.Color
+//import androidx.compose.ui.graphics.vector.ImageVector
+//import androidx.compose.ui.text.font.FontWeight
+//import androidx.compose.ui.unit.dp
+//import androidx.compose.ui.unit.sp
+//import androidx.lifecycle.viewmodel.compose.viewModel
+//import androidx.navigation.NavHostController
+//import com.example.schedulapatientapp.database.DoctorEntity
+//
+//fun getGreetingText(): String {
+//    val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+//    return when (hour) {
+//        in 5..11 -> "Good Morning ☀️"
+//        in 12..16 -> "Good Afternoon 🌤️"
+//        in 17..20 -> "Good Evening 🌆"
+//        else -> "Good Night 🌙"
+//    }
+//}
+//
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun SearchScreen(
+//    navcontroller: NavHostController,
+//    mainViewModel: MainViewModel = viewModel() // 1. ViewModel Instance Attached
+//) {
+//    // 2. Fetch Live Dynamic List directly from Room Database
+//    val doctorsFromRoom by mainViewModel.doctorsList.collectAsState()
+//
+//    // Memory for Search Query & Selected Bottom Bar Tab
+//    var searchQuery by remember { mutableStateOf("") }
+//    var selectedTab by remember { mutableStateOf(0) }
+//
+//    // Filter doctors dynamically based on search text input
+//    val filteredDoctors = doctorsFromRoom.filter { doctor ->
+//        doctor.name.contains(searchQuery, ignoreCase = true) ||
+//                doctor.specialty.contains(searchQuery, ignoreCase = true)
+//    }.distinctBy { it.name }
+//
+//    Scaffold(
+//        topBar = {
+//            CenterAlignedTopAppBar(
+//                title = {
+//                    Text("Search Doctor", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+//                },
+//                navigationIcon = {
+//                    IconButton(onClick = { navcontroller.popBackStack() }) {
+//                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+//                    }
+//                },
+//                actions = {
+//                    Box(
+//                        modifier = Modifier
+//                            .padding(end = 12.dp)
+//                            .clickable { navcontroller.navigate("appointment_reminders") },
+//                        contentAlignment = Alignment.TopEnd
+//                    ) {
+//                        IconButton(
+//                            onClick = { navcontroller.navigate("appointment_reminders") },
+//                            modifier = Modifier
+//                                .size(38.dp)
+//                                .background(Color(0xFFF0FDF4), CircleShape)
+//                        ) {
+//                            Icon(
+//                                imageVector = Icons.Default.Notifications,
+//                                contentDescription = "Alerts",
+//                                tint = Color(0xFF2196F3),
+//                                modifier = Modifier.size(20.dp)
+//                            )
+//                        }
+//                        Box(
+//                            modifier = Modifier
+//                                .size(16.dp)
+//                                .background(Color(0xFFF97316), CircleShape),
+//                            contentAlignment = Alignment.Center
+//                        ) {
+//                            Text("2", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+//                        }
+//                    }
+//                }
+//            )
+//        },
+//        bottomBar = {
+//            NavigationBar(containerColor = Color.White) {
+//                NavigationBarItem(
+//                    icon = { Icon(Icons.Default.Search, null) },
+//                    label = { Text("Find Doctor") },
+//                    selected = selectedTab == 0,
+//                    onClick = { selectedTab = 0 }
+//                )
+//                NavigationBarItem(
+//                    icon = { Icon(Icons.Default.List, null) },
+//                    label = { Text("Records") },
+//                    selected = selectedTab == 1,
+//                    onClick = {
+//                        selectedTab = 1
+//                        navcontroller.navigate("patient_reengagement")
+//                    }
+//                )
+//                NavigationBarItem(
+//                    icon = { Icon(Icons.Default.DateRange, null) },
+//                    label = { Text("Appointment") },
+//                    selected = selectedTab == 2,
+//                    onClick = {
+//                        selectedTab = 2
+//                        navcontroller.navigate("reschedule_by_doctor")
+//                    }
+//                )
+//                NavigationBarItem(
+//                    icon = { Icon(Icons.Default.Person, null) },
+//                    label = { Text("Profile") },
+//                    selected = selectedTab == 3,
+//                    onClick = {
+//                        selectedTab = 3
+//                        navcontroller.navigate("seamless_appointment")
+//                    }
+//                )
+//            }
+//        }
+//    ) { innerPadding ->
+//        Column(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(innerPadding)
+//                .padding(horizontal = 16.dp)
+//                .verticalScroll(rememberScrollState())
+//        ) {
 //            Text(
-//                text = "Nearby Clinics",
+//                text = getGreetingText(),
+//                fontSize = 18.sp,
+//                fontWeight = FontWeight.ExtraBold,
+//                modifier = Modifier.padding(top = 20.dp, bottom = 10.dp)
+//            )
+//
+//            // Search Bar connected to searchQuery state
+//            OutlinedTextField(
+//                value = searchQuery,
+//                onValueChange = { newValue -> searchQuery = newValue },
+//                modifier = Modifier.fillMaxWidth(),
+//                placeholder = { Text("Search by name or specialty...") },
+//                leadingIcon = { Icon(Icons.Default.Search, null) },
+//                shape = RoundedCornerShape(12.dp)
+//            )
+//
+//            Spacer(modifier = Modifier.height(20.dp))
+//
+//            Text(
+//                text = "Top Specialists",
 //                fontWeight = FontWeight.Bold,
 //                fontSize = 18.sp
 //            )
 //
-//           // Clinic Section
-//                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-//                        Text("Nearby Clinics", fontWeight = FontWeight.Bold)
-//                        Text("Map View", color = Color.Blue)
-//                    }
+//            Spacer(modifier = Modifier.height(10.dp))
 //
-//            ClinicItem("City Care Clinic", "2.4km • Open now", Icons.Default.LocationOn)
-        }
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-// 4. THE SMALL COMPONENTS (Doctor circles and Clinic cards)
-@Composable
-fun DoctorItem(doctor: Doctor, navController: NavHostController) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(8.dp) .clickable {navController.navigate("doctor_profile")}) {
-
-        Box(
-            modifier = Modifier.size(80.dp).background(doctor.color.copy(alpha = 0.2f), CircleShape).border(2.dp, doctor.color, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = doctor.name.replace("Dr. ", "").take(1).uppercase(), fontSize = 24.sp, fontWeight = FontWeight.Bold, color = doctor.color)
-        }
-        Text(doctor.name, fontWeight = FontWeight.Bold, fontSize = 12.sp, maxLines = 1)
-        Text(doctor.specialty, color = Color.Gray, fontSize = 10.sp)
-    }
-}
-
-@Composable
-fun ClinicItem(name: String, info: String, icon: ImageVector) {
-    Card(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp), shape = RoundedCornerShape(12.dp)) {
-        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(icon, contentDescription = null, tint = Color.Blue, modifier = Modifier.size(40.dp))
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(name, fontWeight = FontWeight.Bold)
-                Text(info, color = Color.Gray, fontSize = 12.sp)
-            }
-        }
-    }
-}
-
-
-
-
-
+//            // 3. Grid Rendering Live Room Database Items
+//            LazyVerticalGrid(
+//                columns = GridCells.Fixed(3),
+//                modifier = Modifier.height(400.dp),
+//                contentPadding = PaddingValues(top = 8.dp)
+//            ) {
+//                items(filteredDoctors) { doctor ->
+//                    DoctorItem(doctor = doctor, navController = navcontroller)
+//                }
+//            }
+//
+//            Spacer(modifier = Modifier.height(20.dp))
+//        }
+//    }
+//}
+//
+//// 4. Updated DoctorItem Component to work with Room's DoctorEntity
+//@Composable
+//fun DoctorItem(doctor: DoctorEntity, navController: NavHostController) {
+//    val themeColor = Color(0xFF2196F3) // Professional blue highlight color
+//
+//    Column(
+//        horizontalAlignment = Alignment.CenterHorizontally,
+//        modifier = Modifier
+//            .padding(8.dp)
+//            .clickable { navController.navigate("doctor_profile") }
+//    ) {
+//        Box(
+//            modifier = Modifier
+//                .size(80.dp)
+//                .background(themeColor.copy(alpha = 0.15f), CircleShape)
+//                .border(2.dp, themeColor, CircleShape),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            Text(
+//                text = doctor.name.replace("Dr. ", "").take(1).uppercase(),
+//                fontSize = 24.sp,
+//                fontWeight = FontWeight.Bold,
+//                color = themeColor
+//            )
+//        }
+//        Text(
+//            text = doctor.name,
+//            fontWeight = FontWeight.Bold,
+//            fontSize = 12.sp,
+//            maxLines = 1
+//        )
+//        Text(
+//            text = doctor.specialty,
+//            color = Color.Gray,
+//            fontSize = 10.sp,
+//            maxLines = 1
+//        )
+//    }
+//}
+//
+//@Composable
+//fun ClinicItem(name: String, info: String, icon: ImageVector) {
+//    Card(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(vertical = 8.dp),
+//        shape = RoundedCornerShape(12.dp)
+//    ) {
+//        Row(
+//            modifier = Modifier.padding(16.dp),
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Icon(
+//                imageVector = icon,
+//                contentDescription = null,
+//                tint = Color.Blue,
+//                modifier = Modifier.size(40.dp)
+//            )
+//            Spacer(modifier = Modifier.width(16.dp))
+//            Column {
+//                Text(name, fontWeight = FontWeight.Bold)
+//                Text(info, color = Color.Gray, fontSize = 12.sp)
+//            }
+//        }
+//    }
+//}
