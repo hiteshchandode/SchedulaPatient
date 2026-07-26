@@ -184,16 +184,60 @@ fun BookingStepOne(navController: NavController, viewModel: BookingViewModel) {
             Text("Consulting type", fontWeight = FontWeight.Bold, fontSize = 16.sp)
             Spacer(modifier = Modifier.height(12.dp))
 
-            Box(modifier = Modifier.fillMaxWidth()){
+            Box(modifier = Modifier.fillMaxWidth()) {
+                // Dropdown Trigger Button Card
+                OutlinedCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { isDropdownExpanded = true }, // Opens the menu when clicked
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = viewModel.consultType,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 15.sp
+                        )
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Dropdown Arrow",
+                            tint = Color.Gray
+                        )
+                    }
+                }
 
-            }
+                // Interactive Dropdown Menu List
+                DropdownMenu(
+                    expanded = isDropdownExpanded,
+                    onDismissRequest = { isDropdownExpanded = false }, // Closes if user taps outside
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .background(Color.White)
+                ) {
+                    val consultingOptions = listOf(
+                        "In-Person Consultation",
+                        "Video Consultation",
+                        "Audio Call Consultation"
+                    )
 
-            OutlinedCard(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)) {
-                Row(modifier = Modifier.padding(16.dp).fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(viewModel.consultType, fontWeight = FontWeight.Medium)
-                    Text("▼", color = Color.Gray)
+                    consultingOptions.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option, fontSize = 14.sp) },
+                            onClick = {
+                                viewModel.consultType = option // Update ViewModel with selected type
+                                isDropdownExpanded = false    // Close dropdown
+                            }
+                        )
+                    }
                 }
             }
+
 
             Spacer(modifier = Modifier.weight(1f))
 
