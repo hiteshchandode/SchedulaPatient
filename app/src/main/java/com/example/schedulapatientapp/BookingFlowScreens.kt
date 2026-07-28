@@ -248,6 +248,14 @@ fun BookingStepOne(navController: NavController, viewModel: BookingViewModel) {
     }
 }
 
+
+
+
+
+
+
+
+
 // --- TIME SLOT SCREEN ---
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -256,6 +264,7 @@ fun TimeSlotScreen(navController: NavController, viewModel: BookingViewModel) {
     val doctorName = viewModel.selectedDoctorName
     val doctorSpecialty = viewModel.selectedDoctorSpecialty
     val initialLetter = doctorName.replace("Dr. ", "").take(1).uppercase()
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     Scaffold(
         topBar = {
@@ -279,6 +288,7 @@ fun TimeSlotScreen(navController: NavController, viewModel: BookingViewModel) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Doctor Card
             Surface(
                 modifier = Modifier.size(80.dp),
                 shape = RoundedCornerShape(20.dp),
@@ -303,6 +313,32 @@ fun TimeSlotScreen(navController: NavController, viewModel: BookingViewModel) {
                 }
             }
 
+            // --- ADDED SUMMARY CARD (SHOWS SELECTED DATE & CONSULTING TYPE) ---
+            Spacer(modifier = Modifier.height(12.dp))
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD)),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "📅 Date: ${viewModel.selectedDate.ifEmpty { "Not selected" }}",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF1565C0)
+                    )
+                    Text(
+                        text = "🩺 ${viewModel.consultType}",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF1565C0)
+                    )
+                }
+            }
+
             Text("Choose your slot", modifier = Modifier.fillMaxWidth().padding(top = 20.dp), fontWeight = FontWeight.Bold)
 
             TimeSlotGroup(
@@ -321,15 +357,132 @@ fun TimeSlotScreen(navController: NavController, viewModel: BookingViewModel) {
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            AppButton("Next: Select time") {
-                if (viewModel.selectedTime.isNotEmpty()) {
-                    navController.navigate("exact_time_picker")
-                }
+            // Validated Button
+            Button(
+                onClick = {
+                    if (viewModel.selectedTime.isEmpty()) {
+                        android.widget.Toast.makeText(context, "Please select a time slot first!", android.widget.Toast.LENGTH_SHORT).show()
+                    } else {
+                        navController.navigate("exact_time_picker")
+                    }
+                },
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
+            ) {
+                Text("Next: Select time →", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// --- TIME SLOT SCREEN ---
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun TimeSlotScreen(navController: NavController, viewModel: BookingViewModel) {
+//    val scrollState = rememberScrollState()
+//    val doctorName = viewModel.selectedDoctorName
+//    val doctorSpecialty = viewModel.selectedDoctorSpecialty
+//    val initialLetter = doctorName.replace("Dr. ", "").take(1).uppercase()
+//
+//    Scaffold(
+//        topBar = {
+//            CenterAlignedTopAppBar(
+//                title = { Text("Select Time", fontWeight = FontWeight.Bold) },
+//                navigationIcon = {
+//                    IconButton(onClick = { navController.popBackStack() }) {
+//                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+//                    }
+//                }
+//            )
+//        },
+//        bottomBar = { BookingBottomBar(navController, "booking_step1") }
+//    ) { padding ->
+//        Column(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(padding)
+//                .background(Color(0xFFF8FAFC))
+//                .verticalScroll(scrollState)
+//                .padding(16.dp),
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//            Surface(
+//                modifier = Modifier.size(80.dp),
+//                shape = RoundedCornerShape(20.dp),
+//                color = Color(0xFFE3F2FD)
+//            ) {
+//                Box(contentAlignment = Alignment.Center) {
+//                    Text(initialLetter, color = Color(0xFF2196F3), fontSize = 32.sp, fontWeight = FontWeight.Bold)
+//                }
+//            }
+//            Text(doctorName, fontWeight = FontWeight.Bold, fontSize = 20.sp, modifier = Modifier.padding(top = 8.dp))
+//
+//            Card(
+//                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+//                colors = CardDefaults.cardColors(containerColor = Color.White),
+//                shape = RoundedCornerShape(16.dp)
+//            ) {
+//                Column(modifier = Modifier.padding(16.dp)) {
+//                    Text("SPECIALTY", color = Color(0xFF2196F3), fontSize = 12.sp, fontWeight = FontWeight.Bold)
+//                    Text(doctorSpecialty, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+//                    Spacer(modifier = Modifier.height(8.dp))
+//                    Text("🕒 12 yrs Experience", color = Color.Gray, fontSize = 13.sp)
+//                }
+//            }
+//
+//            Text("Choose your slot", modifier = Modifier.fillMaxWidth().padding(top = 20.dp), fontWeight = FontWeight.Bold)
+//
+//            TimeSlotGroup(
+//                sectionTitle = "Morning",
+//                timeList = listOf("10:00 AM", "11:00 AM"),
+//                selectedTime = viewModel.selectedTime,
+//                onSelect = { viewModel.selectedTime = it }
+//            )
+//
+//            TimeSlotGroup(
+//                sectionTitle = "Evening",
+//                timeList = listOf("05:00 PM", "06:00 PM"),
+//                selectedTime = viewModel.selectedTime,
+//                onSelect = { viewModel.selectedTime = it }
+//            )
+//
+//            Spacer(modifier = Modifier.height(30.dp))
+//
+//            AppButton("Next: Select time") {
+//                if (viewModel.selectedTime.isNotEmpty()) {
+//                    navController.navigate("exact_time_picker")
+//                }
+//            }
+//            Spacer(modifier = Modifier.height(16.dp))
+//        }
+//    }
+//}
 
 // --- EXACT TIME PICKER WITH CLOCK DIAL ---
 @OptIn(ExperimentalMaterial3Api::class)

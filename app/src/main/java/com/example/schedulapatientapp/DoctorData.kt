@@ -35,14 +35,6 @@ val Doctors = listOf(
 
 
 
-
-
-
-
-
-
-
-
 data class Clinic(
     val id: Int,
     val name: String,

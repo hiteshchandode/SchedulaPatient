@@ -25,6 +25,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.compose.ui.platform.LocalContext
+import android.widget.Toast
 
 // Theme Colors
 val BrandBlue = Color(0xFF2196F3)
@@ -34,6 +36,8 @@ val BackgroundLightBlue = Color(0xFFF8FBFF)
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
+    var context = LocalContext.current
+
     var phoneNumber by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
 
@@ -121,16 +125,34 @@ fun LoginScreen(navController: NavHostController) {
         }
 
         // 5. CONTINUE BUTTON
+        val context = LocalContext.current
+
         Button(
-            onClick = {navController.navigate("doctor_list") },
+            onClick = {
+                when {
+                    phoneNumber.isBlank() -> {
+                        Toast.makeText(context, "Please enter your mobile number!", Toast.LENGTH_SHORT).show()
+                    }
+                    phoneNumber.length < 10 -> {
+                        Toast.makeText(context, "Mobile number must be 10 digits!", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        navController.navigate("doctor_list") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    }
+                }
+            },
             modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFA726)), // Orange from image
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (phoneNumber.length == 10) Color(0xFFFFA726) else Color(0xFFFFCC80)
+            ),
             shape = RoundedCornerShape(12.dp)
         ) {
             Text("Continue  →", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+
 
         // 6. ALTERNATIVE ACCESS SECTION
         Text("ALTERNATIVE ACCESS", color = Color.LightGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
@@ -171,9 +193,6 @@ fun LoginScreen(navController: NavHostController) {
         Spacer(modifier = Modifier.height(20.dp))
     }
 }
-
-
-
 
 
 

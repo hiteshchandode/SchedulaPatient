@@ -1,6 +1,5 @@
 package com.example.schedulapatientapp
 
-
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,12 +18,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.schedulapatientapp.database.AppointmentEntity
-
 
 // PAGE: MY APPOINTMENTS
 // Displays upcoming appointments dynamically fetched from Room Database.
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -277,6 +273,32 @@ fun AppointmentsBottomNavigation(navController: NavController) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //package com.example.schedulapatientapp
 //
 //
@@ -296,17 +318,24 @@ fun AppointmentsBottomNavigation(navController: NavController) {
 //import androidx.compose.ui.text.font.FontWeight
 //import androidx.compose.ui.unit.dp
 //import androidx.compose.ui.unit.sp
+//import androidx.lifecycle.viewmodel.compose.viewModel
 //import androidx.navigation.NavController
-//import androidx.navigation.compose.rememberNavController
+//import com.example.schedulapatientapp.database.AppointmentEntity
 //
 //
 //// PAGE: MY APPOINTMENTS
-//// Displays upcoming, past, and cancelled appointments with doctor details.
+//// Displays upcoming appointments dynamically fetched from Room Database.
 //
 //
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Composable
-//fun MyAppointmentsScreen(navController: NavController) {
+//fun MyAppointmentsScreen(
+//    navController: NavController,
+//    mainViewModel: MainViewModel = viewModel() // 1. Added ViewModel to connect Room Database
+//) {
+//    // 2. Collect live reactive appointment list from Room Database
+//    val appointmentsFromRoom by mainViewModel.appointmentsList.collectAsState()
+//
 //    Scaffold(
 //        topBar = {
 //            TopAppBar(
@@ -326,7 +355,15 @@ fun AppointmentsBottomNavigation(navController: NavController) {
 //        bottomBar = { AppointmentsBottomNavigation(navController) },
 //        floatingActionButton = {
 //            FloatingActionButton(
-//                onClick = { /* Add new appointment action */ },
+//                onClick = {
+//                    mainViewModel.addAppointment(
+//                        doctorName = "Dr. Sunil Patil",
+//                        patientName = "Hitesh Chandode",
+//                        date = "July 26, 2026",
+//                        timeSlot = "10:15 AM",
+//                        tokenNumber = "#14",
+//                    )
+//                },
 //                containerColor = Color(0xFF2196F3),
 //                contentColor = Color.White,
 //                shape = CircleShape
@@ -353,43 +390,42 @@ fun AppointmentsBottomNavigation(navController: NavController) {
 //                TabButton("Cancelled", isSelected = false, modifier = Modifier.weight(1f))
 //            }
 //
+//            // 3. Render Dynamic Room Database Appointments
 //            LazyColumn(
-//                modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .padding(horizontal = 16.dp),
 //                verticalArrangement = Arrangement.spacedBy(16.dp)
 //            ) {
 //                item {
-//                    DateHeader("TODAY", "March 8, 2026")
+//                    DateHeader("ROOM DB", "Live Bookings")
 //                }
 //
-//                // Sample Data representing the wireframe
-//                item {
-//                    AppointmentCard(
-//                        doctorName = "Dr. Lavangi",
-//                        patientName = "Meena",
-//                        time = "8:00 PM",
-//                        avatarLetter = "L",
-//                        onViewClick = { navController.navigate("medical_chat") }
-//                    )
-//                }
-//
-//                item {
-//                    AppointmentCard(
-//                        doctorName = "Dr. Kumar",
-//                        patientName = "Muthukumar",
-//                        time = "Tomorrow, 11:00 AM",
-//                        avatarLetter = "K",
-//                        onViewClick = { }
-//                    )
-//                }
-//
-//                item {
-//                    AppointmentCard(
-//                        doctorName = "Dr. Sarah Wilson",
-//                        patientName = "Meena",
-//                        time = "Mar 12, 10:30 AM",
-//                        avatarLetter = "S",
-//                        onViewClick = { }
-//                    )
+//                if (appointmentsFromRoom.isEmpty()) {
+//                    item {
+//                        Box(
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .padding(top = 40.dp),
+//                            contentAlignment = Alignment.Center
+//                        ) {
+//                            Text(
+//                                text = "No appointments booked yet!",
+//                                color = Color.Gray,
+//                                fontSize = 14.sp
+//                            )
+//                        }
+//                    }
+//                } else {
+//                    items(appointmentsFromRoom) { appointment ->
+//                        AppointmentCard(
+//                            doctorName = appointment.doctorName,
+//                            patientName = appointment.patientName,
+//                            time = "${appointment.date} • ${appointment.timeSlot}",
+//                            avatarLetter = appointment.doctorName.replace("Dr. ", "").take(1).uppercase(),
+//                            onViewClick = { navController.navigate("medical_chat") }
+//                        )
+//                    }
 //                }
 //
 //                item { Spacer(modifier = Modifier.height(80.dp)) }
@@ -486,7 +522,7 @@ fun AppointmentsBottomNavigation(navController: NavController) {
 //                    Text("Reschedule", color = Color(0xFF2196F3))
 //                }
 //                Button(
-//                    onClick = { },
+//                    onClick = onViewClick,
 //                    modifier = Modifier.weight(1f),
 //                    shape = RoundedCornerShape(8.dp),
 //                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
@@ -505,7 +541,7 @@ fun AppointmentsBottomNavigation(navController: NavController) {
 //            icon = { Icon(Icons.Default.Search, null) },
 //            label = { Text("Search", fontSize = 10.sp) },
 //            selected = false,
-//            onClick = { }
+//            onClick = { navController.navigate("search_doctor") }
 //        )
 //        NavigationBarItem(
 //            icon = { Icon(Icons.Default.AccountBalanceWallet, null) },
@@ -527,7 +563,7 @@ fun AppointmentsBottomNavigation(navController: NavController) {
 //            icon = { Icon(Icons.Default.Person, null) },
 //            label = { Text("Profile", fontSize = 10.sp) },
 //            selected = false,
-//            onClick = { }
+//            onClick = { navController.navigate("profile") }
 //        )
 //    }
 //}
