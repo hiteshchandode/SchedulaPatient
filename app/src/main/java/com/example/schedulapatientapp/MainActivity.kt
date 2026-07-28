@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("medical_chat") {
-                            MedicalChatScreen(navController = navController)
+                            MedicalChatScreen(navController = navController, viewModel = bookingViewModel)
                         }
 
                         composable("my_appointments") {
