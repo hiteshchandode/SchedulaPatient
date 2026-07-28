@@ -19,7 +19,8 @@ import java.util.UUID
 data class ChatMessage(
     val id: String = UUID.randomUUID().toString(),
     val sender: String, // "patient" or "doctor"
-    val text: String,
+    val text: String = "",
+    val imageUri: String? = null,
     val time: String = "Just now"
 )
 
@@ -48,20 +49,6 @@ class BookingViewModel : ViewModel() {
     // CHAT MANAGEMENT STATE
     private val _chatHistories = mutableStateMapOf<String, SnapshotStateList<ChatMessage>>()
 
-    // Fetch or create a separate chat list for the selected doctor
-    fun getChatForCurrentDoctor(): SnapshotStateList<ChatMessage> {
-        val doctorKey = selectedDoctorName.ifEmpty { "DefaultDoctor" }
-        return _chatHistories.getOrPut(doctorKey) {
-            mutableStateListOf(
-                ChatMessage(
-                    sender = "doctor",
-                    text = "Hello! I am $doctorKey. How can I assist you regarding your health today?",
-                    time = "10:00 AM"
-                )
-            )
-        }
-    }
-
     // Send user message and simulate doctor auto-reply after 1.5 seconds
     fun sendMessage(userText: String) {
         if (userText.isBlank()) return
@@ -81,21 +68,129 @@ class BookingViewModel : ViewModel() {
         }
     }
 
-    // Smart contextual reply generation logic
-    private fun generateDoctorReply(query: String, doctorName: String): String {
-        val lower = query.lowercase()
-        return when {
-            lower.contains("pain") || lower.contains("fever") || lower.contains("sick") ->
-                "I understand. Please stay hydrated and rest well. I have made a note of your symptoms for our appointment."
-            lower.contains("hello") || lower.contains("hi") || lower.contains("hey") ->
-                "Hello! Please describe your symptoms or any health issues you are currently facing."
-            lower.contains("time") || lower.contains("appointment") || lower.contains("when") ->
-                "Your appointment has been registered. Please arrive 10 minutes prior to your token time."
-            else ->
-                "Thank you for sharing. $doctorName has received your note and will discuss this during your consultation."
+    // Send attached image from camera or gallery
+    fun sendImageMessage(uriString: String) {
+        val currentChat = getChatForCurrentDoctor()
+        val currentTime = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date())
+
+        currentChat.add(
+            ChatMessage(
+                sender = "patient",
+                text = "Attached Image",
+                imageUri = uriString,
+                time = currentTime
+            )
+        )
+
+        viewModelScope.launch {
+            delay(1500)
+            val doctorName = selectedDoctorName.ifEmpty { "Doctor" }
+            currentChat.add(
+                ChatMessage(
+                    sender = "doctor",
+                    text = "Thank you for sending the image/report. $doctorName will review it shortly.",
+                    time = currentTime
+                )
+            )
         }
     }
+
+    // Fetch or create a separate chat list with specialty-specific welcome message
+    fun getChatForCurrentDoctor(): SnapshotStateList<ChatMessage> {
+        val doctorKey = selectedDoctorName.ifEmpty { "DefaultDoctor" }
+        val specialty = selectedDoctorSpecialty.ifEmpty { "General Physician" }
+
+        return _chatHistories.getOrPut(doctorKey) {
+            val initialGreeting = getSpecialtyGreeting(doctorKey, specialty)
+            mutableStateListOf(
+                ChatMessage(
+                    sender = "doctor",
+                    text = initialGreeting,
+                    time = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date())
+                )
+            )
+        }
+    }
+
+    // Dynamic initial greeting based on doctor specialty
+    private fun getSpecialtyGreeting(doctorName: String, specialty: String): String {
+        val lowerSpec = specialty.lowercase()
+        return when {
+            lowerSpec.contains("cardio") ->
+                "Hello! I am $doctorName ($specialty). If you are experiencing chest discomfort, shortness of breath, or palpitations, please describe them."
+
+            lowerSpec.contains("derm") || lowerSpec.contains("skin") ->
+                "Hello! I am $doctorName ($specialty). You can share details or upload a photo of any skin rash or allergy you'd like me to examine."
+
+            lowerSpec.contains("pedia") || lowerSpec.contains("child") ->
+                "Hello! I am $doctorName ($specialty). How is your child feeling today? Please mention their age and fever/pain details."
+
+            lowerSpec.contains("ortho") || lowerSpec.contains("bone") ->
+                "Hello! I am $doctorName ($specialty). Are you facing joint stiffness, back pain, or swelling?"
+
+            else ->
+                "Hello! I am $doctorName ($specialty). How can I assist you regarding your health today?"
+        }
+    }
+
+    // Tailored auto-reply based on BOTH Doctor Specialty AND Consult Type (In-Person, Video, Audio)
+    private fun generateDoctorReply(query: String, doctorName: String): String {
+        val lowerQuery = query.lowercase()
+        val specialty = selectedDoctorSpecialty.lowercase()
+        val type = consultType.lowercase()
+
+        // 1. Consultation-Type Specific Instructions
+        val consultInstruction = when {
+            type.contains("video") ->
+                "Since this is a Video Consultation, please join the video room 5 minutes before $selectedTime."
+
+            type.contains("audio") || type.contains("phone") ->
+                "Since this is an Audio Call, please keep your phone active around $selectedTime."
+
+            else ->
+                "Since this is an In-Person Consultation, please present your token ($tokenNumber) at the clinic counter."
+        }
+
+        // 2. Specialty Specific Guidance
+        val specialtyAdvice = when {
+            specialty.contains("cardio") -> when {
+                lowerQuery.contains("chest") || lowerQuery.contains("pain") || lowerQuery.contains("breath") ->
+                    "Avoid any physical exertion and keep your blood pressure reports ready."
+
+                else ->
+                    "I have recorded your cardiac symptoms for our discussion."
+            }
+
+            specialty.contains("derm") -> when {
+                lowerQuery.contains("skin") || lowerQuery.contains("rash") || lowerQuery.contains("itch") ->
+                    "Please do not apply heavy creams or scratch the area before the examination."
+
+                else ->
+                    "I have logged your skin concern details."
+            }
+
+            specialty.contains("ortho") -> when {
+                lowerQuery.contains("joint") || lowerQuery.contains("bone") || lowerQuery.contains("swelling") ->
+                    "Avoid heavy lifting and apply ice if there is active swelling."
+
+                else ->
+                    "Keep any recent X-rays or MRI reports handy."
+            }
+
+            else -> when {
+                lowerQuery.contains("fever") || lowerQuery.contains("pain") ->
+                    "Stay well hydrated and take adequate rest."
+
+                else ->
+                    "I have noted your update for our session."
+            }
+        }
+
+        // Combine into a contextual doctor response
+        return "Thank you for reaching out. $specialtyAdvice $consultInstruction"
+    }
 }
+
 
 
 
