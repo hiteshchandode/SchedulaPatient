@@ -6,6 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -38,10 +39,8 @@ fun MedicalChatScreen(navController: NavController, viewModel: BookingViewModel)
     val listState = rememberLazyListState()
     val context = LocalContext.current
 
-    // Attachment Options Sheet State
+    // Attachment Dialog State
     var showAttachmentMenu by remember { mutableStateOf(false) }
-
-    // Camera Image Temporary URI State
     var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
 
     // Dynamic Data from ViewModel
@@ -53,8 +52,16 @@ fun MedicalChatScreen(navController: NavController, viewModel: BookingViewModel)
     val patientAge = viewModel.patientAge.ifEmpty { "28" }
     val patientComplaint = viewModel.patientComplaint.ifEmpty { "Stomach pain" }
 
-    // Dynamic Live Messages for selected Doctor
+    // Live Messages List
     val chatMessages = viewModel.getChatForCurrentDoctor()
+
+    // Pre-defined quick patient messages
+    val quickMessages = listOf(
+        "When should I take medicine?",
+        "Is fasting required for tests?",
+        "I sent my latest report",
+        "Please check my symptoms"
+    )
 
     // Activity Launchers for Gallery & Camera
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -84,7 +91,7 @@ fun MedicalChatScreen(navController: NavController, viewModel: BookingViewModel)
         cameraLauncher.launch(uri)
     }
 
-    // Auto-scroll to latest message when chat changes
+    // Auto-scroll on new message
     LaunchedEffect(chatMessages.size) {
         if (chatMessages.isNotEmpty()) {
             listState.animateScrollToItem(chatMessages.size - 1)
@@ -172,7 +179,7 @@ fun MedicalChatScreen(navController: NavController, viewModel: BookingViewModel)
                         Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text("PATIENT DETAILS", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                                Text("$patientName, $patientAge, $patientComplaint", fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                                Text("$patientName, $patientAge yrs, $patientComplaint", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                             }
                             Icon(Icons.Default.ChatBubble, contentDescription = null, tint = Color(0xFF2196F3), modifier = Modifier.size(20.dp))
                         }
@@ -218,7 +225,7 @@ fun MedicalChatScreen(navController: NavController, viewModel: BookingViewModel)
                                 shadowElevation = 1.dp
                             ) {
                                 Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
-                                    // Render Image if present
+                                    // Render Attached Image
                                     if (message.imageUri != null) {
                                         AsyncImage(
                                             model = message.imageUri,
@@ -232,7 +239,7 @@ fun MedicalChatScreen(navController: NavController, viewModel: BookingViewModel)
                                         Spacer(modifier = Modifier.height(4.dp))
                                     }
 
-                                    // Render Text if present
+                                    // Render Text
                                     if (message.text.isNotEmpty()) {
                                         Text(
                                             text = message.text,
@@ -256,7 +263,35 @@ fun MedicalChatScreen(navController: NavController, viewModel: BookingViewModel)
                 }
             }
 
-            // --- ATTACHMENT SELECTION MENU DIALOG ---
+            // --- PRE-DEFINED QUICK PATIENT MESSAGES ROW ---
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(quickMessages) { msg ->
+                    SuggestionChip(
+                        onClick = {
+                            viewModel.sendMessage(msg)
+                            coroutineScope.launch {
+                                if (chatMessages.isNotEmpty()) {
+                                    listState.animateScrollToItem(chatMessages.size - 1)
+                                }
+                            }
+                        },
+                        label = { Text(msg, fontSize = 12.sp) },
+                        colors = SuggestionChipDefaults.suggestionChipColors(
+                            containerColor = Color(0xFFE3F2FD),
+                            labelColor = Color(0xFF2196F3)
+                        ),
+                        border = BorderStroke(1.dp, Color(0xFFBBDEFB)),
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                }
+            }
+
+            // --- ATTACHMENT MENU DIALOG ---
             if (showAttachmentMenu) {
                 AlertDialog(
                     onDismissRequest = { showAttachmentMenu = false },
@@ -296,10 +331,10 @@ fun MedicalChatScreen(navController: NavController, viewModel: BookingViewModel)
                 )
             }
 
-            // --- BOTTOM MESSAGE INPUT ---
+            // --- BOTTOM MESSAGE INPUT BAR ---
             Surface(modifier = Modifier.fillMaxWidth(), color = Color.White, tonalElevation = 4.dp) {
                 Row(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     OutlinedTextField(
@@ -324,7 +359,6 @@ fun MedicalChatScreen(navController: NavController, viewModel: BookingViewModel)
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    // Blue Send Button
                     IconButton(
                         onClick = {
                             if (chatInputText.isNotBlank()) {
@@ -380,7 +414,6 @@ fun ChatBottomNavigation(navController: NavController) {
         )
     }
 }
-
 
 
 
