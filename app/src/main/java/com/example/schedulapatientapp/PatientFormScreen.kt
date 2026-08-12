@@ -41,6 +41,9 @@ fun PatientFormScreen(navController: NavController, viewModel: BookingViewModel)
     var selectedVisitType by remember { mutableStateOf("First time") }
     val options = listOf("First time", "Report", "Follow-up")
 
+    // 3. PAYMENT DIALOG STATE
+    var showPaymentDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -248,7 +251,7 @@ fun PatientFormScreen(navController: NavController, viewModel: BookingViewModel)
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // VALIDATED PAYMENT BUTTON
+            // SINGLE PROCEED TO BOOK BUTTON
             Button(
                 onClick = {
                     when {
@@ -262,7 +265,7 @@ fun PatientFormScreen(navController: NavController, viewModel: BookingViewModel)
                             Toast.makeText(context, "Please enter patient complaint!", Toast.LENGTH_SHORT).show()
                         }
                         else -> {
-                            navController.navigate("medical_chat")
+                            showPaymentDialog = true
                         }
                     }
                 },
@@ -270,8 +273,87 @@ fun PatientFormScreen(navController: NavController, viewModel: BookingViewModel)
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
             ) {
-                Text("Make payment →", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text("Proceed to Book →", fontWeight = FontWeight.Bold, fontSize = 16.sp)
             }
+        }
+
+        // --- PAYMENT SELECTION DIALOG ---
+        if (showPaymentDialog) {
+            AlertDialog(
+                onDismissRequest = { showPaymentDialog = false },
+                shape = RoundedCornerShape(20.dp),
+                containerColor = Color.White,
+                title = {
+                    Text(
+                        text = "Choose Payment Method",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(
+                            text = "How would you like to pay for your appointment?",
+                            fontSize = 13.sp,
+                            color = Color.Gray
+                        )
+
+                        // Option 1: Pay Online
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    showPaymentDialog = false
+                                    navController.navigate("medical_chat")
+                                },
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD))
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(Icons.Default.CreditCard, contentDescription = null, tint = Color(0xFF2196F3))
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text("Pay Online Now", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = Color(0xFF1E3A8A))
+                                    Text("Fastest • Priority token tracking", fontSize = 11.sp, color = Color(0xFF2196F3))
+                                }
+                            }
+                        }
+
+                        // Option 2: Pay at Reception
+                        OutlinedCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    showPaymentDialog = false
+                                    navController.navigate("medical_chat")
+                                },
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, Color(0xFF2196F3))
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(Icons.Default.Storefront, contentDescription = null, tint = Color(0xFF2196F3))
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text("Pay at Hospital Reception", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                                    Text("Pay cash/UPI at counter before visit", fontSize = 11.sp, color = Color.Gray)
+                                }
+                            }
+                        }
+                    }
+                },
+                confirmButton = {},
+                dismissButton = {
+                    TextButton(onClick = { showPaymentDialog = false }) {
+                        Text("Cancel", color = Color.Gray)
+                    }
+                }
+            )
         }
     }
 }
@@ -402,11 +484,23 @@ fun UpdatedBottomBar(navController: NavController) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 //package com.example.schedulapatientapp
 //
 //import android.widget.Toast
 //import androidx.compose.foundation.*
 //import androidx.compose.foundation.layout.*
+//import androidx.compose.foundation.shape.CircleShape
 //import androidx.compose.foundation.shape.RoundedCornerShape
 //import androidx.compose.foundation.text.BasicTextField
 //import androidx.compose.material.icons.Icons
@@ -416,6 +510,7 @@ fun UpdatedBottomBar(navController: NavController) {
 //import androidx.compose.ui.Alignment
 //import androidx.compose.ui.Modifier
 //import androidx.compose.ui.graphics.Color
+//import androidx.compose.ui.graphics.vector.ImageVector
 //import androidx.compose.ui.platform.LocalContext
 //import androidx.compose.ui.text.font.FontWeight
 //import androidx.compose.ui.unit.dp
@@ -470,30 +565,42 @@ fun UpdatedBottomBar(navController: NavController) {
 //                colors = CardDefaults.cardColors(containerColor = Color.White),
 //                shape = RoundedCornerShape(16.dp)
 //            ) {
-//                Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-//                    Surface(modifier = Modifier.size(50.dp), shape = RoundedCornerShape(12.dp), color = Color(0xFFE3F2FD)) {
+//                Row(
+//                    modifier = Modifier.padding(16.dp),
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    Surface(
+//                        modifier = Modifier.size(50.dp),
+//                        shape = RoundedCornerShape(12.dp),
+//                        color = Color(0xFFE3F2FD)
+//                    ) {
 //                        Box(contentAlignment = Alignment.Center) {
 //                            Text(initialLetter, color = Color(0xFF2196F3), fontWeight = FontWeight.Bold)
 //                        }
 //                    }
 //                    Spacer(modifier = Modifier.width(12.dp))
-//                    Column {
+//                    Column(modifier = Modifier.weight(1f)) {
 //                        Text(doctorName, fontWeight = FontWeight.Bold, fontSize = 16.sp)
 //                        Text(doctorSpecialty, color = Color(0xFF2196F3), fontSize = 12.sp)
 //                    }
+//                    Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Color.Gray)
 //                }
 //            }
 //
 //            Text("Patient Information", fontWeight = FontWeight.Bold, modifier = Modifier.padding(vertical = 16.dp))
 //
-//            // INPUT SECTION
+//            // INPUT SECTION WITH CIRCULAR AVATAR LOGOS
 //            Card(
 //                modifier = Modifier.fillMaxWidth(),
 //                colors = CardDefaults.cardColors(containerColor = Color.White),
 //                shape = RoundedCornerShape(16.dp)
 //            ) {
-//                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+//                Column(
+//                    modifier = Modifier.padding(16.dp),
+//                    verticalArrangement = Arrangement.spacedBy(16.dp)
+//                ) {
 //                    MyCustomInputField(
+//                        icon = Icons.Default.Person,
 //                        label = "NAME",
 //                        value = name,
 //                        placeholder = "Enter name",
@@ -503,35 +610,68 @@ fun UpdatedBottomBar(navController: NavController) {
 //                        }
 //                    )
 //
+//                    Divider(color = Color(0xFFF1F5F9), thickness = 1.dp)
+//
 //                    MyCustomInputField(
+//                        icon = Icons.Default.CalendarToday,
 //                        label = "AGE / SEX",
 //                        value = ageSex,
-//                        placeholder = "e.g. 28, Female",
+//                        placeholder = "e.g. 24, Male",
 //                        onValueChange = {
 //                            ageSex = it
 //                            viewModel.patientAge = it
 //                        }
 //                    )
 //
-//                    Row(verticalAlignment = Alignment.CenterVertically) {
-//                        Text("WEIGHT", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-//                        Spacer(modifier = Modifier.width(8.dp))
-//                        Surface(color = Color(0xFFF1F5F9), shape = RoundedCornerShape(20.dp)) {
-//                            Row(modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
-//                                BasicTextField(
-//                                    value = weight,
-//                                    onValueChange = { weight = it },
-//                                    modifier = Modifier.width(40.dp)
+//                    Divider(color = Color(0xFFF1F5F9), thickness = 1.dp)
+//
+//                    // WEIGHT WITH CIRCULAR AVATAR
+//                    Row(
+//                        modifier = Modifier.fillMaxWidth(),
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        Surface(
+//                            modifier = Modifier.size(40.dp),
+//                            shape = CircleShape,
+//                            color = Color(0xFFE3F2FD)
+//                        ) {
+//                            Box(contentAlignment = Alignment.Center) {
+//                                Icon(
+//                                    imageVector = Icons.Default.ShoppingBag,
+//                                    contentDescription = null,
+//                                    tint = Color(0xFF2196F3),
+//                                    modifier = Modifier.size(20.dp)
 //                                )
-//                                Text(" kg", color = Color.Gray, fontSize = 12.sp)
+//                            }
+//                        }
+//                        Spacer(modifier = Modifier.width(12.dp))
+//                        Column {
+//                            Text("WEIGHT", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+//                            Spacer(modifier = Modifier.height(2.dp))
+//                            Surface(color = Color(0xFFF1F5F9), shape = RoundedCornerShape(20.dp)) {
+//                                Row(
+//                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+//                                    verticalAlignment = Alignment.CenterVertically
+//                                ) {
+//                                    BasicTextField(
+//                                        value = weight,
+//                                        onValueChange = { weight = it },
+//                                        textStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.Bold, fontSize = 14.sp),
+//                                        modifier = Modifier.width(36.dp)
+//                                    )
+//                                    Text("kg", color = Color.Gray, fontSize = 12.sp)
+//                                }
 //                            }
 //                        }
 //                    }
 //
+//                    Divider(color = Color(0xFFF1F5F9), thickness = 1.dp)
+//
 //                    MyCustomInputField(
+//                        icon = Icons.Default.EventNote,
 //                        label = "COMPLAINT",
 //                        value = complaint,
-//                        placeholder = "Describe your pain",
+//                        placeholder = "Describe your symptom",
 //                        onValueChange = {
 //                            complaint = it
 //                            viewModel.patientComplaint = it
@@ -572,15 +712,22 @@ fun UpdatedBottomBar(navController: NavController) {
 //                            }
 //                        }
 //                    }
+//
+//                    Spacer(modifier = Modifier.height(8.dp))
+//
 //                    Surface(
-//                        modifier = Modifier.fillMaxWidth().height(48.dp),
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .height(48.dp)
+//                            .clickable { /* Handle family appointment */ },
 //                        shape = RoundedCornerShape(12.dp),
 //                        border = BorderStroke(1.dp, Color(0xFF2196F3)),
 //                        color = Color.Transparent
 //                    ) {
 //                        Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-//                            Icon(Icons.Default.Person, null, tint = Color(0xFF2196F3), modifier = Modifier.size(18.dp))
-//                            Text(" Family appointment", color = Color(0xFF2196F3))
+//                            Icon(Icons.Default.PersonAdd, null, tint = Color(0xFF2196F3), modifier = Modifier.size(18.dp))
+//                            Spacer(modifier = Modifier.width(6.dp))
+//                            Text("Family appointment", color = Color(0xFF2196F3), fontWeight = FontWeight.SemiBold)
 //                        }
 //                    }
 //                }
@@ -589,7 +736,7 @@ fun UpdatedBottomBar(navController: NavController) {
 //            // PAYMENT NOTE
 //            Spacer(modifier = Modifier.height(20.dp))
 //            Surface(modifier = Modifier.fillMaxWidth(), color = Color(0xFFE3F2FD), shape = RoundedCornerShape(8.dp)) {
-//                Row(modifier = Modifier.padding(12.dp)) {
+//                Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
 //                    Icon(Icons.Default.Info, null, tint = Color(0xFF2196F3), modifier = Modifier.size(18.dp))
 //                    Spacer(modifier = Modifier.width(8.dp))
 //                    Text("Pay upfront to reduce waiting time by paying consulting fee.", fontSize = 11.sp, color = Color(0xFF1E3A8A))
@@ -620,33 +767,66 @@ fun UpdatedBottomBar(navController: NavController) {
 //                shape = RoundedCornerShape(12.dp),
 //                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
 //            ) {
-//                Text("Make payment →", fontWeight = FontWeight.Bold)
+//                Text("Make payment →", fontWeight = FontWeight.Bold, fontSize = 16.sp)
 //            }
 //        }
 //    }
 //}
 //
-//// THE HELPER COMPONENT (UNCHANGED UI)
+//// HELPER INPUT FIELD COMPONENT WITH CIRCULAR ICON BADGE
 //@Composable
-//fun MyCustomInputField(label: String, value: String, placeholder: String, onValueChange: (String) -> Unit, hasEditIcon: Boolean = false) {
-//    Column {
-//        Text(label, color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-//        Box(contentAlignment = Alignment.CenterStart) {
-//            if (value.isEmpty()) Text(placeholder, color = Color.LightGray, fontSize = 16.sp)
-//            Row(verticalAlignment = Alignment.CenterVertically) {
-//                BasicTextField(
-//                    value = value,
-//                    onValueChange = onValueChange,
-//                    textStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.Bold, fontSize = 16.sp),
-//                    modifier = Modifier.weight(1f).padding(vertical = 4.dp)
+//fun MyCustomInputField(
+//    icon: ImageVector,
+//    label: String,
+//    value: String,
+//    placeholder: String,
+//    onValueChange: (String) -> Unit,
+//    hasEditIcon: Boolean = false
+//) {
+//    Row(
+//        modifier = Modifier.fillMaxWidth(),
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        // CIRCULAR AVATAR ICON
+//        Surface(
+//            modifier = Modifier.size(40.dp),
+//            shape = CircleShape,
+//            color = Color(0xFFE3F2FD)
+//        ) {
+//            Box(contentAlignment = Alignment.Center) {
+//                Icon(
+//                    imageVector = icon,
+//                    contentDescription = null,
+//                    tint = Color(0xFF2196F3),
+//                    modifier = Modifier.size(20.dp)
 //                )
-//                if (hasEditIcon) Icon(Icons.Default.Edit, null, tint = Color(0xFF2196F3), modifier = Modifier.size(16.dp))
+//            }
+//        }
+//
+//        Spacer(modifier = Modifier.width(12.dp))
+//
+//        // INPUT FIELD TEXT
+//        Column(modifier = Modifier.weight(1f)) {
+//            Text(label, color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+//            Box(contentAlignment = Alignment.CenterStart) {
+//                if (value.isEmpty()) Text(placeholder, color = Color.LightGray, fontSize = 15.sp)
+//                Row(verticalAlignment = Alignment.CenterVertically) {
+//                    BasicTextField(
+//                        value = value,
+//                        onValueChange = onValueChange,
+//                        textStyle = LocalTextStyle.current.copy(fontWeight = FontWeight.Bold, fontSize = 15.sp),
+//                        modifier = Modifier.weight(1f).padding(vertical = 2.dp)
+//                    )
+//                    if (hasEditIcon) {
+//                        Icon(Icons.Default.Edit, null, tint = Color(0xFF2196F3), modifier = Modifier.size(16.dp))
+//                    }
+//                }
 //            }
 //        }
 //    }
 //}
 //
-//// BOTTOM BAR COMPONENT (UNCHANGED UI)
+//// BOTTOM BAR COMPONENT
 //@Composable
 //fun UpdatedBottomBar(navController: NavController) {
 //    NavigationBar(
@@ -682,4 +862,5 @@ fun UpdatedBottomBar(navController: NavController) {
 //        )
 //    }
 //}
-//
+
+
