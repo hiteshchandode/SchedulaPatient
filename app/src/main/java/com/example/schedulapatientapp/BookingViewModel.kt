@@ -43,6 +43,10 @@ class BookingViewModel : ViewModel() {
     var patientWeight by mutableStateOf("68 kg")
     var patientComplaint by mutableStateOf("Fever")
 
+
+    // Inside BookingViewModel class
+    var paymentMode by mutableStateOf("Reception") // Default to "Reception" or "Online"
+
     // Token
     var tokenNumber by mutableStateOf("#14")
 
