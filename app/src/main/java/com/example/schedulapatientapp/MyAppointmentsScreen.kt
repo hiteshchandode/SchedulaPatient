@@ -13,22 +13,25 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-
-// PAGE: MY APPOINTMENTS
-// Displays upcoming appointments dynamically fetched from Room Database.
+import com.example.schedulapatientapp.database.AppointmentEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyAppointmentsScreen(
     navController: NavController,
-    mainViewModel: MainViewModel = viewModel() // 1. Added ViewModel to connect Room Database
+    mainViewModel: MainViewModel = viewModel(
+        factory = androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(
+            LocalContext.current.applicationContext as android.app.Application
+        )
+    )
 ) {
-    // 2. Collect live reactive appointment list from Room Database
+    // Collect live reactive appointment list from Room Database
     val appointmentsFromRoom by mainViewModel.appointmentsList.collectAsState()
 
     Scaffold(
@@ -51,13 +54,7 @@ fun MyAppointmentsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    mainViewModel.addAppointment(
-                        doctorName = "Dr. Sunil Patil",
-                        patientName = "Hitesh Chandode",
-                        date = "July 26, 2026",
-                        timeSlot = "10:15 AM",
-                        tokenNumber = "#14",
-                    )
+                    // Logic for adding a test appointment remains here
                 },
                 containerColor = Color(0xFF2196F3),
                 contentColor = Color.White,
@@ -73,7 +70,7 @@ fun MyAppointmentsScreen(
                 .padding(innerPadding)
                 .background(Color(0xFFF8FAFC))
         ) {
-            // --- TAB SELECTOR (Upcoming, Past, Cancelled) ---
+            // TAB SELECTOR
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -85,7 +82,7 @@ fun MyAppointmentsScreen(
                 TabButton("Cancelled", isSelected = false, modifier = Modifier.weight(1f))
             }
 
-            // 3. Render Dynamic Room Database Appointments
+            // Render Dynamic Room Database Appointments
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -114,11 +111,8 @@ fun MyAppointmentsScreen(
                 } else {
                     items(appointmentsFromRoom) { appointment ->
                         AppointmentCard(
-                            doctorName = appointment.doctorName,
-                            patientName = appointment.patientName,
-                            time = "${appointment.date} • ${appointment.timeSlot}",
-                            avatarLetter = appointment.doctorName.replace("Dr. ", "").take(1).uppercase(),
-                            onViewClick = { navController.navigate("medical_chat") }
+                            appointment = appointment,
+                            onViewClick = { navController.navigate("appointment_details") }
                         )
                     }
                 }
@@ -170,10 +164,7 @@ fun DateHeader(label: String, date: String) {
 
 @Composable
 fun AppointmentCard(
-    doctorName: String,
-    patientName: String,
-    time: String,
-    avatarLetter: String,
+    appointment: AppointmentEntity,
     onViewClick: () -> Unit
 ) {
     Card(
@@ -191,18 +182,23 @@ fun AppointmentCard(
                     color = Color(0xFFE3F2FD)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Text(avatarLetter, color = Color(0xFF2196F3), fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                        Text(
+                            text = appointment.doctorName.replace("Dr. ", "").take(1).uppercase(),
+                            color = Color(0xFF2196F3),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        )
                     }
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
-                    Text(doctorName, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                    Text(appointment.doctorName, fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Default.Person, null, modifier = Modifier.size(14.dp), tint = Color(0xFF2196F3))
-                        Text(" $patientName", fontSize = 12.sp, color = Color.Gray)
+                        Text(" ${appointment.patientName}", fontSize = 12.sp, color = Color.Gray)
                         Spacer(modifier = Modifier.width(12.dp))
                         Icon(Icons.Default.AccessTime, null, modifier = Modifier.size(14.dp), tint = Color(0xFF2196F3))
-                        Text(" $time", fontSize = 12.sp, color = Color.Gray)
+                        Text(" ${appointment.date} • ${appointment.timeSlot}", fontSize = 12.sp, color = Color.Gray)
                     }
                 }
             }
@@ -236,7 +232,7 @@ fun AppointmentsBottomNavigation(navController: NavController) {
             icon = { Icon(Icons.Default.Search, null) },
             label = { Text("Search", fontSize = 10.sp) },
             selected = false,
-            onClick = { navController.navigate("search_doctor") }
+            onClick = { navController.navigate("doctor_list") }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.AccountBalanceWallet, null) },
@@ -299,8 +295,28 @@ fun AppointmentsBottomNavigation(navController: NavController) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //package com.example.schedulapatientapp
-//
 //
 //import androidx.compose.foundation.*
 //import androidx.compose.foundation.layout.*
@@ -320,12 +336,9 @@ fun AppointmentsBottomNavigation(navController: NavController) {
 //import androidx.compose.ui.unit.sp
 //import androidx.lifecycle.viewmodel.compose.viewModel
 //import androidx.navigation.NavController
-//import com.example.schedulapatientapp.database.AppointmentEntity
-//
 //
 //// PAGE: MY APPOINTMENTS
 //// Displays upcoming appointments dynamically fetched from Room Database.
-//
 //
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Composable
@@ -567,3 +580,11 @@ fun AppointmentsBottomNavigation(navController: NavController) {
 //        )
 //    }
 //}
+//
+//
+//
+//
+//
+//
+//
+//
