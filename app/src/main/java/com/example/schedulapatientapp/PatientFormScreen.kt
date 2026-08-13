@@ -457,7 +457,7 @@ fun UpdatedBottomBar(navController: NavController) {
             icon = { Icon(Icons.Default.AccountBalanceWallet, contentDescription = "Payments") },
             label = { Text("Payments", fontSize = 10.sp) },
             selected = false,
-            onClick = { /* navigate to payments */ }
+            onClick = { navController.navigate("payments") }
         )
 
         NavigationBarItem(

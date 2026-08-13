@@ -517,7 +517,7 @@ fun DetailsBottomNavigation(navController: NavController) {
             icon = { Icon(Icons.Default.Payments, null) },
             label = { Text("Payments", fontSize = 10.sp) },
             selected = false,
-            onClick = { }
+            onClick = { navController.navigate("payments") }
         )
         NavigationBarItem(
             icon = { Icon(Icons.Default.CalendarToday, null) },
