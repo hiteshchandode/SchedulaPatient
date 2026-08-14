@@ -92,6 +92,8 @@ class MainActivity : ComponentActivity() {
                         }
 
 
+
+
                         composable("appointment_details") { AppointmentDetailsScreen(navController = navController, viewModel = bookingViewModel) }
                         composable("appointment_cancel") { AppointmentCancelScreen(navController) }
                         composable("reschedule_appointment") { RescheduleAppointmentScreen(navController) }
