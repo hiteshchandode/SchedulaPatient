@@ -112,6 +112,7 @@ fun MyAppointmentsScreen(
                     items(appointmentsFromRoom) { appointment ->
                         AppointmentCard(
                             appointment = appointment,
+                            navController = navController,
                             onViewClick = { navController.navigate("appointment_details") }
                         )
                     }
@@ -165,6 +166,7 @@ fun DateHeader(label: String, date: String) {
 @Composable
 fun AppointmentCard(
     appointment: AppointmentEntity,
+    navController: NavController,
     onViewClick: () -> Unit
 ) {
     Card(
@@ -205,7 +207,7 @@ fun AppointmentCard(
             Spacer(modifier = Modifier.height(16.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedButton(
-                    onClick = { },
+                    onClick = { navController.navigate("reschedule_by_doctor") },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, Color(0xFF2196F3))
