@@ -271,7 +271,7 @@ fun PatientProfileBottomNavigation(navController: NavController) {
             icon = { Icon(Icons.Default.Person, null) },
             label = { Text("Profile", fontSize = 10.sp) },
             selected = true,
-            onClick = { },
+            onClick = { navController.navigate("profile") },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color(0xFF2196F3),
                 selectedTextColor = Color(0xFF2196F3)

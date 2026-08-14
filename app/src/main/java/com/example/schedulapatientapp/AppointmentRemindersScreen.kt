@@ -298,6 +298,6 @@ fun RemindersBottomNavigation(navController: NavController) {
         NavigationBarItem(icon = { Icon(Icons.Default.PersonSearch, null) }, label = { Text("Find a Doctor") }, selected = false, onClick = { })
         NavigationBarItem(icon = { Icon(Icons.Default.Folder, null) }, label = { Text("My Records") }, selected = false, onClick = { })
         NavigationBarItem(icon = { Icon(Icons.Outlined.CalendarMonth, null) }, label = { Text("My Appt") }, selected = true, onClick = { })
-        NavigationBarItem(icon = { Icon(Icons.Default.Person, null) }, label = { Text("Profile") }, selected = false, onClick = { })
+        NavigationBarItem(icon = { Icon(Icons.Default.Person, null) }, label = { Text("Profile") }, selected = false, onClick = { navController.navigate("profile") })
     }
 }

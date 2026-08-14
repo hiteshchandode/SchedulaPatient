@@ -228,6 +228,6 @@ fun RescheduleBottomNavigation(navController: NavController) {
         NavigationBarItem(icon = { Icon(Icons.Default.Home, null) }, label = { Text("Home") }, selected = false, onClick = { })
         NavigationBarItem(icon = { Icon(Icons.Default.CalendarToday, null) }, label = { Text("My Appt") }, selected = true, onClick = { })
         NavigationBarItem(icon = { Icon(Icons.Default.Folder, null) }, label = { Text("Records") }, selected = false, onClick = { })
-        NavigationBarItem(icon = { Icon(Icons.Default.Person, null) }, label = { Text("Profile") }, selected = false, onClick = { })
+        NavigationBarItem(icon = { Icon(Icons.Default.Person, null) }, label = { Text("Profile") }, selected = false, onClick = { navController.navigate("profile") })
     }
 }

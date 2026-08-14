@@ -298,7 +298,7 @@ fun SeamlessAppointmentBottomBar(navController: NavController) {
             icon = { Icon(Icons.Default.Person, null) },
             label = { Text("Profile", fontSize = 10.sp) },
             selected = false,
-            onClick = { }
+            onClick = {  }
         )
     }
 }

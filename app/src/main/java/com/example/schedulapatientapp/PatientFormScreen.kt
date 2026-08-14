@@ -471,7 +471,7 @@ fun UpdatedBottomBar(navController: NavController) {
             icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
             label = { Text("Profile", fontSize = 10.sp) },
             selected = false,
-            onClick = { /* navigate to profile */ }
+            onClick = { navController.navigate("profile") }
         )
     }
 }

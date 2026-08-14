@@ -91,6 +91,11 @@ class MainActivity : ComponentActivity() {
                             PaymentsScreen(navController = navController, mainViewModel = mainViewModel)
                         }
 
+                        //for profile tab
+                        composable("profile") {
+                            PatientProfileScreen(navController = navController)
+                        }
+
 
 
 
@@ -108,7 +113,7 @@ class MainActivity : ComponentActivity() {
                         composable("google_review") { GoogleReviewScreen(navController) }
                         composable("confirmation") { ConfirmationScreen(navController = navController, viewModel = bookingViewModel) }
                         composable("records") { RecordsScreen(navController = navController, viewModel = bookingViewModel) }
-                        composable("profile") { ProfileScreen(navController) }
+                        //composable("profile") { ProfileScreen(navController) }
                     }
                 }
             }
