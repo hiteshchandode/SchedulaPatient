@@ -173,7 +173,7 @@ fun PatientProfileScreen(navController: NavController) {
                             icon = Icons.Default.Notifications,
                             title = "Appointment Reminders",
                             subtitle = "Push notifications & SMS alerts",
-                            onClick = { navController.navigate("appointment_reminders") }
+                            onClick = { navController.navigate("record") }
                         )
                         Divider(color = Color(0xFFF1F5F9))
                         PatientProfileMenuItem(
