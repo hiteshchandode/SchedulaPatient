@@ -1,5 +1,7 @@
 package com.example.schedulapatientapp
 
+//  LOGIC & STATE IMPORTS START
+
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,6 +34,8 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import java.io.File
 
+//  LOGIC & STATE IMPORTS END
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MedicalChatScreen(
@@ -48,18 +52,37 @@ fun MedicalChatScreen(
     val listState = rememberLazyListState()
     val context = LocalContext.current
 
-    // Attachment Dialog State
+    //  DYNAMIC CHAT & DOCTOR CONTEXT STATE (START)
+
     var showAttachmentMenu by remember { mutableStateOf(false) }
     var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
 
-    // Dynamic Data from ViewModel
-    val doctorName = viewModel.selectedDoctorName.ifEmpty { "Dr. Suresh Patil" }
-    val doctorSpecialty = viewModel.selectedDoctorSpecialty.ifEmpty { "Cardiologist" }
-    val initialLetter = doctorName.replace("Dr. ", "").take(1).uppercase()
+    // Fetch active appointments from Room DB if ViewModel properties are unpopulated
+    val appointmentsFromRoom by mainViewModel.appointmentsList.collectAsState()
+    val latestAppt = appointmentsFromRoom.firstOrNull { it.status != "Cancelled" }
 
-    val patientName = viewModel.patientName.ifEmpty { "Hitesh Chandode" }
-    val patientAge = viewModel.patientAge.ifEmpty { "24" }
-    val patientComplaint = viewModel.patientComplaint.ifEmpty { "Stomach pain" }
+    val doctorName = if (viewModel.selectedDoctorName.isNotEmpty()) {
+        viewModel.selectedDoctorName
+    } else {
+        latestAppt?.doctorName ?: "Dr. Suresh Patil"
+    }
+
+    val doctorSpecialty = if (viewModel.selectedDoctorSpecialty.isNotEmpty()) {
+        viewModel.selectedDoctorSpecialty
+    } else {
+        latestAppt?.doctorSpecialty ?: "Cardiologist"
+    }
+
+    val initialLetter = doctorName.replace("Dr. ", "").take(1).uppercase().ifEmpty { "S" }
+
+    val patientName = if (viewModel.patientName.isNotEmpty()) {
+        viewModel.patientName
+    } else {
+        latestAppt?.patientName ?: "Hitesh Chandode"
+    }
+
+    val patientAge = if (viewModel.patientAge.isNotEmpty()) viewModel.patientAge else "24"
+    val patientComplaint = if (viewModel.patientComplaint.isNotEmpty()) viewModel.patientComplaint else "General Consultation"
 
     // Live Messages List from ViewModel
     val chatMessages = viewModel.getChatForCurrentDoctor()
@@ -72,13 +95,11 @@ fun MedicalChatScreen(
         "Please check my symptoms"
     )
 
-    // Activity Launchers for Gallery & Camera
+    // Activity Launchers for Media Attachments
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        uri?.let {
-            viewModel.sendImageMessage(it.toString())
-        }
+        uri?.let { viewModel.sendImageMessage(it.toString()) }
     }
 
     val cameraLauncher = rememberLauncherForActivityResult(
@@ -100,12 +121,14 @@ fun MedicalChatScreen(
         cameraLauncher.launch(uri)
     }
 
-    // Auto-scroll on new message
+    // Auto-scroll to latest message on receive/send
     LaunchedEffect(chatMessages.size) {
         if (chatMessages.isNotEmpty()) {
             listState.animateScrollToItem(chatMessages.size - 1)
         }
     }
+
+    //  DYNAMIC CHAT & DOCTOR CONTEXT STATE (END)
 
     Scaffold(
         topBar = {
@@ -392,31 +415,34 @@ fun MedicalChatScreen(
     }
 }
 
-// UNIQUE BOTTOM NAVIGATION
+// Standard Bottom Navigation Bar
 @Composable
 fun ChatBottomNavigation(navController: NavController) {
     NavigationBar(containerColor = Color.White) {
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Search, null) },
+            icon = { Icon(Icons.Default.Search, contentDescription = "Search") },
             label = { Text("Search", fontSize = 10.sp) },
             selected = false,
             onClick = { navController.navigate("doctor_list") }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Default.AccountBalanceWallet, null) },
+            icon = { Icon(Icons.Default.AccountBalanceWallet, contentDescription = "Payments") },
             label = { Text("Payments", fontSize = 10.sp) },
             selected = false,
             onClick = { navController.navigate("payments") }
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Default.DateRange, null) },
+            icon = { Icon(Icons.Default.DateRange, contentDescription = "My Appt") },
             label = { Text("My Appt", fontSize = 10.sp) },
             selected = true,
             onClick = { navController.navigate("my_appointments") },
-            colors = NavigationBarItemDefaults.colors(selectedIconColor = Color(0xFF2196F3), selectedTextColor = Color(0xFF2196F3))
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = Color(0xFF2196F3),
+                selectedTextColor = Color(0xFF2196F3)
+            )
         )
         NavigationBarItem(
-            icon = { Icon(Icons.Default.Person, null) },
+            icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
             label = { Text("Profile", fontSize = 10.sp) },
             selected = false,
             onClick = { navController.navigate("profile") }
@@ -509,6 +535,7 @@ fun ChatBottomNavigation(navController: NavController) {
 //import androidx.compose.ui.unit.dp
 //import androidx.compose.ui.unit.sp
 //import androidx.core.content.FileProvider
+//import androidx.lifecycle.viewmodel.compose.viewModel
 //import androidx.navigation.NavController
 //import coil.compose.AsyncImage
 //import kotlinx.coroutines.launch
@@ -516,7 +543,15 @@ fun ChatBottomNavigation(navController: NavController) {
 //
 //@OptIn(ExperimentalMaterial3Api::class)
 //@Composable
-//fun MedicalChatScreen(navController: NavController, viewModel: BookingViewModel) {
+//fun MedicalChatScreen(
+//    navController: NavController,
+//    viewModel: BookingViewModel,
+//    mainViewModel: MainViewModel = viewModel(
+//        factory = androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(
+//            LocalContext.current.applicationContext as android.app.Application
+//        )
+//    )
+//) {
 //    var chatInputText by remember { mutableStateOf("") }
 //    val coroutineScope = rememberCoroutineScope()
 //    val listState = rememberLazyListState()
@@ -527,15 +562,15 @@ fun ChatBottomNavigation(navController: NavController) {
 //    var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
 //
 //    // Dynamic Data from ViewModel
-//    val doctorName = viewModel.selectedDoctorName.ifEmpty { "Dr. Kumar" }
+//    val doctorName = viewModel.selectedDoctorName.ifEmpty { "Dr. Suresh Patil" }
 //    val doctorSpecialty = viewModel.selectedDoctorSpecialty.ifEmpty { "Cardiologist" }
 //    val initialLetter = doctorName.replace("Dr. ", "").take(1).uppercase()
 //
-//    val patientName = viewModel.patientName.ifEmpty { "Rudra" }
-//    val patientAge = viewModel.patientAge.ifEmpty { "28" }
+//    val patientName = viewModel.patientName.ifEmpty { "Hitesh Chandode" }
+//    val patientAge = viewModel.patientAge.ifEmpty { "24" }
 //    val patientComplaint = viewModel.patientComplaint.ifEmpty { "Stomach pain" }
 //
-//    // Live Messages List
+//    // Live Messages List from ViewModel
 //    val chatMessages = viewModel.getChatForCurrentDoctor()
 //
 //    // Pre-defined quick patient messages
@@ -880,7 +915,7 @@ fun ChatBottomNavigation(navController: NavController) {
 //            icon = { Icon(Icons.Default.AccountBalanceWallet, null) },
 //            label = { Text("Payments", fontSize = 10.sp) },
 //            selected = false,
-//            onClick = { navController.navigate("records") }
+//            onClick = { navController.navigate("payments") }
 //        )
 //        NavigationBarItem(
 //            icon = { Icon(Icons.Default.DateRange, null) },
@@ -893,10 +928,8 @@ fun ChatBottomNavigation(navController: NavController) {
 //            icon = { Icon(Icons.Default.Person, null) },
 //            label = { Text("Profile", fontSize = 10.sp) },
 //            selected = false,
-//            onClick = { }
+//            onClick = { navController.navigate("profile") }
 //        )
 //    }
 //}
-//
-//
 //
