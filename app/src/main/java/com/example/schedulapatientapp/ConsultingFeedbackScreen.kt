@@ -65,14 +65,16 @@ fun ConsultingFeedbackScreen(
         latestAppt?.doctorSpecialty ?: "Gynecologist"
     }
 
+
     // Resolve appointment time dynamically
     val consultingTime = if (!viewModel?.selectedDate.isNullOrEmpty() && !viewModel?.selectedTime.isNullOrEmpty()) {
         "${viewModel?.selectedDate}, ${viewModel?.selectedTime}"
     } else if (latestAppt != null) {
-        "${latestAppt.appointmentDate}, ${latestAppt.appointmentTime}"
+        "${latestAppt.date}, ${latestAppt.timeSlot}"
     } else {
         "Aug 7, 8 AM"
     }
+
 
     // Extract first initial letter for avatar display
     val initialLetter = doctorName.replace("Dr. ", "").trim().take(1).uppercase().ifEmpty { "L" }
@@ -300,7 +302,7 @@ fun FeedbackBottomNavigation(navController: NavController) {
         )
         NavigationBarItem(
             icon = { Icon(Icons.Outlined.CalendarMonth, contentDescription = "My Appt") },
-            label = { Text("My Appt") },
+            label = { Text("My  Appt") },
             selected = true,
             onClick = { navController.navigate("my_appointments") }
         )
