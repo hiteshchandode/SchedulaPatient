@@ -124,7 +124,7 @@ fun SearchScreen(
                     selected = selectedTab == 2,
                     onClick = {
                         selectedTab = 2
-                        navcontroller.navigate("reschedule_by_doctor")
+                        navcontroller.navigate("my_appointments")
                     }
                 )
                 NavigationBarItem(
